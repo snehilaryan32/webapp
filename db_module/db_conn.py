@@ -11,7 +11,7 @@ password = os.getenv("DB_PASSWORD")
 
 # Create the database URL
 db_url = f"postgresql://{user}:{password}@{host}:{port}/{database}"
-\
+
 #Function to connect to the database
 def db_connect():
     try:
