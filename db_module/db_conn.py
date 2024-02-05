@@ -1,5 +1,6 @@
 import os
 from sqlalchemy import create_engine, text
+from models.user import User, Base
 
 #Pick DB credentials from environment variables
 host = os.getenv("DB_HOST")
@@ -10,7 +11,7 @@ password = os.getenv("DB_PASSWORD")
 
 # Create the database URL
 db_url = f"postgresql://{user}:{password}@{host}:{port}/{database}"
-
+print(db_url)
 #Function to connect to the database
 def db_connect():
     try:
@@ -29,3 +30,22 @@ def db_close(connection):
         return True
     except Exception as e:
         return False
+    
+#Function to execute a query
+def db_execute(connection, query):
+    try:
+        result = connection.execute(text(query))
+        return result
+    except Exception as e:
+        return False
+    
+#Botstrapping Function 
+def db_bootstrap():
+    try:
+        engine = create_engine(db_url)
+        Base.metadata.create_all(engine)
+        return True
+    except Exception as e:
+        return False
+    
+print(db_bootstrap())
