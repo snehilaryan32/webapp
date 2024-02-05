@@ -61,10 +61,9 @@ def db_bootstrap():
 
 
 #################################################################################################################################################
-# Testing Functions
-print(db_bootstrap())
+
 
 
 # Testing Functions 
-print(db_bootstrap())
+# print(db_bootstrap())
     

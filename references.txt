@@ -1,0 +1,5 @@
+# For bcrypt passwords
+https://www.geeksforgeeks.org/hashing-passwords-in-python-with-bcrypt/
+
+# ORM interaction using sessions 
+https://coderpad.io/blog/development/sqlalchemy-with-postgresql/
