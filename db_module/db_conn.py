@@ -11,7 +11,7 @@ password = os.getenv("DB_PASSWORD")
 
 # Create the database URL
 db_url = f"postgresql://{user}:{password}@{host}:{port}/{database}"
-print(db_url)
+\
 #Function to connect to the database
 def db_connect():
     try:
@@ -19,6 +19,15 @@ def db_connect():
         connection = engine.connect()
         # connection.close()
         return connection
+    except Exception as e:
+        print(e)
+        return False
+    
+#Function to create the engine
+def db_engine():
+    try:
+        engine = create_engine(db_url)
+        return engine
     except Exception as e:
         print(e)
         return False
@@ -42,10 +51,20 @@ def db_execute(connection, query):
 #Botstrapping Function 
 def db_bootstrap():
     try:
-        engine = create_engine(db_url)
+        engine = db_engine()
         Base.metadata.create_all(engine)
         return True
     except Exception as e:
+        print(e)
         return False
-    
+
+
+
+#################################################################################################################################################
+# Testing Functions
 print(db_bootstrap())
+
+
+# Testing Functions 
+print(db_bootstrap())
+    
