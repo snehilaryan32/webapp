@@ -6,7 +6,6 @@ from flask_bcrypt import Bcrypt
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 bcrypt = Bcrypt()
-
 db_conn.db_bootstrap()
 
 ###################################Basic Auth############################################
@@ -52,9 +51,11 @@ def db_health_check():
 def create_user():
     response = make_response()
     payload = request.get_json(force=True)
+
     #Check if all the required fields are provided
     if "email" not in payload.keys() or "first_name" not in payload.keys() or "last_name" not in payload.keys() or "password" not in payload.keys():
         response = jsonify({"message": "Bad Request Please provide all required fields"})
+        print(payload)
         response.status_code = 400
     else:
         result = user_controller.create_user(payload['email'], payload['first_name'], payload['last_name'], bcrypt.generate_password_hash(payload['password']).decode('utf-8'))
@@ -64,25 +65,46 @@ def create_user():
 
 
 ###############################Get User Details#########################################
-@app.route('/user/self', methods=['GET'])
+@app.route('/user/self', methods=['GET', 'POST'])
 @auth.login_required
 def get_user():
     response = make_response()
-    username = auth.current_user()
-    user =  user_controller.get_user_details(username)
-    print(user.username)
-    if user:
-        response.status_code = 200
-        print(user.username, type(user.first_name), user.last_name)
-        response = make_response(jsonify({
-                "id": user.id,
-                "username": user.username, 
-                "first_name": user.first_name, 
-                "last_name": user.last_name, 
-                "account_created": user.account_created, 
-                "account_updated": user.account_updated
-            }),200)
+    if request.method == 'GET':
+        username = auth.current_user()
+        user =  user_controller.get_user_details(username)
+        print(user.username)
+        if user:
+            response.status_code = 200
+            print(user.username, type(user.first_name), user.last_name)
+            response = make_response(jsonify({
+                    "id": user.id,
+                    "username": user.username, 
+                    "first_name": user.first_name, 
+                    "last_name": user.last_name, 
+                    "account_created": user.account_created, 
+                    "account_updated": user.account_updated
+                }),200)
         return response
+    
+# @app.route('/user/self', methods=['POST'])
+# @auth.login_required
+# def get_user():
+#     response = make_response()
+#     username = auth.current_user()
+#     user =  user_controller.get_user_details(username)
+#     print(user.username)
+#     if user:
+#         response.status_code = 200
+#         print(user.username, type(user.first_name), user.last_name)
+#         response = make_response(jsonify({
+#                 "id": user.id,
+#                 "username": user.username, 
+#                 "first_name": user.first_name, 
+#                 "last_name": user.last_name, 
+#                 "account_created": user.account_created, 
+#                 "account_updated": user.account_updated
+#             }),200)
+#         return response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
