@@ -1,4 +1,3 @@
-
 from flask import Flask, make_response, jsonify, request
 from db_module import db_conn, user_controller
 from flask_httpauth import HTTPBasicAuth
@@ -8,8 +7,9 @@ app = Flask(__name__)
 auth = HTTPBasicAuth()
 bcrypt = Bcrypt()
 
-###################################Basic Auth############################################
+db_conn.db_bootstrap()
 
+###################################Basic Auth############################################
 @auth.verify_password
 def verify_password(username, password):
     hash_in_db = user_controller.get_hashed_password(username)
@@ -54,12 +54,12 @@ def create_user():
     payload = request.get_json(force=True)
     #Check if all the required fields are provided
     if "email" not in payload.keys() or "first_name" not in payload.keys() or "last_name" not in payload.keys() or "password" not in payload.keys():
+        response = jsonify({"message": "Bad Request Please provide all required fields"})
         response.status_code = 400
-        response.data = "Bad Request Please provide all required fields"
     else:
         result = user_controller.create_user(payload['email'], payload['first_name'], payload['last_name'], bcrypt.generate_password_hash(payload['password']).decode('utf-8'))
+        response = jsonify({"message": result['message']})
         response.status_code = result['status_code']
-        response.data = result['message']
     return response
 
 
@@ -70,19 +70,19 @@ def get_user():
     response = make_response()
     username = auth.current_user()
     user =  user_controller.get_user_details(username)
+    print(user.username)
     if user:
         response.status_code = 200
         print(user.username, type(user.first_name), user.last_name)
-       response = make_response(
-            jsonify({
+        response = make_response(jsonify({
+                "id": user.id,
                 "username": user.username, 
                 "first_name": user.first_name, 
                 "last_name": user.last_name, 
                 "account_created": user.account_created, 
                 "account_updated": user.account_updated
-            }), 
-            200
-        )
+            }),200)
+        return response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)

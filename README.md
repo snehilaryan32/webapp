@@ -27,6 +27,12 @@ sudo -u postgres psql
 sudo -u postgres createuser snehilaryan 
 alter user snehilaryan with encrypted password 'your_pass';
 
+## Add extension for uuid
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+## Alter table to add id column
+ALTER TABLE users ADD COLUMN id UUID PRIMARY KEY DEFAULT uuid_generate_v4();
+
 # Django
 django-admin startproject app
 django-admin startapp healthapp
