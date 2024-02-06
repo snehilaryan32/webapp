@@ -1,0 +1,11 @@
+# For bcrypt passwords
+https://www.geeksforgeeks.org/hashing-passwords-in-python-with-bcrypt/
+
+# ORM interaction using sessions 
+https://coderpad.io/blog/development/sqlalchemy-with-postgresql/
+
+# Http Basic Auth for flask
+https://medium.com/tek-society/how-to-secure-your-python-flask-routes-with-basic-auth-in-5-minutes-6e3cea1448a4
+
+# Flask bcrypt 
+https://flask-bcrypt.readthedocs.io/en/1.0.1/index.html?highlight=check_password_hash#flask_bcrypt.Bcrypt.check_password_hash
