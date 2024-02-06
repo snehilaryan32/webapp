@@ -9,6 +9,9 @@ source environment.sh
 
 flask run -p 8089
 
+# code to test modules 
+python -m db_module.user_controller
+
 ## Database
 ### Start The Service 
 sudo service postgresql start

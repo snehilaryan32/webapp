@@ -1,7 +1,23 @@
+
 from flask import Flask, make_response, jsonify, request
 from db_module import db_conn, user_controller
-app = Flask(__name__)
+from flask_httpauth import HTTPBasicAuth
+from flask_bcrypt import Bcrypt
 
+app = Flask(__name__)
+auth = HTTPBasicAuth()
+bcrypt = Bcrypt()
+
+###################################Basic Auth############################################
+
+@auth.verify_password
+def verify_password(username, password):
+    hash_in_db = user_controller.get_hashed_password(username)
+    if hash_in_db and bcrypt.check_password_hash(hash_in_db, password):
+        return username
+
+
+###############################Health Check############################################
 @app.route('/healthz', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
 def db_health_check():
     response = make_response()
@@ -31,7 +47,7 @@ def db_health_check():
     return response
 
 
-
+###############################User Creation############################################
 @app.route('/user', methods=['POST'])
 def create_user():
     response = make_response()
@@ -41,28 +57,32 @@ def create_user():
         response.status_code = 400
         response.data = "Bad Request Please provide all required fields"
     else:
-        result = user_controller.create_user(payload['email'], payload['first_name'], payload['last_name'], payload['password'])
-        print(result)
+        result = user_controller.create_user(payload['email'], payload['first_name'], payload['last_name'], bcrypt.generate_password_hash(payload['password']).decode('utf-8'))
         response.status_code = result['status_code']
         response.data = result['message']
     return response
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#     return response
+###############################Get User Details#########################################
+@app.route('/user/self', methods=['GET'])
+@auth.login_required
+def get_user():
+    response = make_response()
+    username = auth.current_user()
+    user =  user_controller.get_user_details(username)
+    if user:
+        response.status_code = 200
+        print(user.username, type(user.first_name), user.last_name)
+       response = make_response(
+            jsonify({
+                "username": user.username, 
+                "first_name": user.first_name, 
+                "last_name": user.last_name, 
+                "account_created": user.account_created, 
+                "account_updated": user.account_updated
+            }), 
+            200
+        )
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
