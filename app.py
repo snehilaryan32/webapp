@@ -11,14 +11,33 @@ auth = HTTPBasicAuth()
 bcrypt = Bcrypt()
 db_conn.db_bootstrap()
 
+###################################Setting Up Header Functions###############################
+def set_response_headers(response):
+    response.headers['Content-Type'] = 'application/json'
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'  
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    return response
+
 ###################################Error Handling############################################
 @app.errorhandler(BadRequest)
 def handle_bad_request(e):
-    return jsonify({"description": "Bad Request"}), 400
+    response = jsonify({"description": "Bad Request"})
+    response = set_response_headers(response)
+    return response, 400
 
 @app.errorhandler(MethodNotAllowed)
 def handle_method_not_allowed(e):
-    return  jsonify({}), 405
+    response = jsonify({})
+    response = set_response_headers(response)
+    return response, 405
+
+@app.errorhandler(404)
+def handle_404(e):
+    response = jsonify({})
+    response = set_response_headers(response)
+    return response, 404
+
 
 ###################################Basic Auth############################################
 @auth.verify_password
@@ -50,15 +69,11 @@ def db_health_check():
         elif db_conn.db_connect() == False:
             response.status_code = 503
 
-    response.headers['Content-Type'] = 'application/json'
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'  
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-
+    response = set_response_headers(response)
     return response
 
 ###############################User Creation############################################
-@app.route('/user', methods=['POST'])
+@app.route('/v1/user', methods=['POST'])
 def create_user():
     response = make_response()
     response.headers['Content-Type'] = 'application/json'
@@ -83,10 +98,11 @@ def create_user():
         response = jsonify({"description": "Invalid Payload"})
         response.status_code = 400
 
+    response = set_response_headers(response)
     return response 
 
 ###############################Get User Details and Post Update#########################################
-@app.route('/user/self', methods=['GET', 'PUT'])
+@app.route('/v1/user/self', methods=['GET', 'PUT'])
 @auth.login_required
 def get_user():
     response = make_response()
@@ -114,14 +130,16 @@ def get_user():
     if request.method == 'PUT':
         payload = request.get_json(force=True)
         if pydantic_validators.is_valid_payload(payload, pydantic_validators.UpdateUserPayload):  
+            print("verified")
             payload["password"] = bcrypt.generate_password_hash(payload['password']).decode('utf-8') 
             result = user_controller.update_user_details(auth.current_user(), payload)
             response.status_code = result['status_code']
         else:
             raise BadRequest
+    
+    response = set_response_headers(response)
     return response
     
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
