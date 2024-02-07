@@ -11,13 +11,21 @@ auth = HTTPBasicAuth()
 bcrypt = Bcrypt()
 db_conn.db_bootstrap()
 
-###################################Setting Up Header Functions###############################
+
+###################################Helper Functions############################################
+
+###Setting Up Header Functions###########
 def set_response_headers(response):
     response.headers['Content-Type'] = 'application/json'
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response.headers['Pragma'] = 'no-cache'  
     response.headers['X-Content-Type-Options'] = 'nosniff'
     return response
+
+###Check for unnecessary Authorization###
+def __check_for_unnecessary_auth():
+    if 'Authorization' in request.headers:
+        raise BadRequest(description="Authorization should not be provided")
 
 ###################################Error Handling############################################
 @app.errorhandler(BadRequest)
@@ -38,7 +46,6 @@ def handle_404(e):
     response = set_response_headers(response)
     return response, 404
 
-
 ###################################Basic Auth############################################
 @auth.verify_password
 def verify_password(username, password):
@@ -57,6 +64,7 @@ def db_health_check():
         response.status_code = 405
 
     else:
+        __check_for_unnecessary_auth
         #Check if the request has a payload or URL Parameters were provided and raise 400
         if request.data or request.args:
             response.status_code = 400
@@ -78,8 +86,10 @@ def create_user():
     response = make_response()
     response.headers['Content-Type'] = 'application/json'
     payload = request.get_json(force=True)
-    #Check if all the required fields are provided
 
+    #Check if the request has Authorization and raise BadRequest
+    __check_for_unnecessary_auth()
+    #Check if all the required fields are provided
     if pydantic_validators.is_valid_payload(payload, pydantic_validators.CreateUserPayload): 
         #Hash the password
         payload["password"] = bcrypt.generate_password_hash(payload['password']).decode('utf-8')
