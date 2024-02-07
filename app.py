@@ -1,12 +1,24 @@
 from flask import Flask, make_response, jsonify, request
-from db_module import db_conn, user_controller
 from flask_httpauth import HTTPBasicAuth
 from flask_bcrypt import Bcrypt
+from werkzeug.exceptions import BadRequest, MethodNotAllowed
+from pydantic import ValidationError    
+from models import pydantic_validators
+from db_module import db_conn, user_controller
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 bcrypt = Bcrypt()
 db_conn.db_bootstrap()
+
+###################################Error Handling############################################
+@app.errorhandler(BadRequest)
+def handle_bad_request(e):
+    return jsonify({"description": "Bad Request"}), 400
+
+@app.errorhandler(MethodNotAllowed)
+def handle_method_not_allowed(e):
+    return  jsonify({}), 405
 
 ###################################Basic Auth############################################
 @auth.verify_password
@@ -45,66 +57,71 @@ def db_health_check():
 
     return response
 
-
 ###############################User Creation############################################
 @app.route('/user', methods=['POST'])
 def create_user():
     response = make_response()
+    response.headers['Content-Type'] = 'application/json'
     payload = request.get_json(force=True)
-
     #Check if all the required fields are provided
-    if "email" not in payload.keys() or "first_name" not in payload.keys() or "last_name" not in payload.keys() or "password" not in payload.keys():
-        response = jsonify({"message": "Bad Request Please provide all required fields"})
-        print(payload)
-        response.status_code = 400
+
+    if pydantic_validators.is_valid_payload(payload, pydantic_validators.CreateUserPayload): 
+        #Hash the password
+        payload["password"] = bcrypt.generate_password_hash(payload['password']).decode('utf-8')
+        result = user_controller.create_user(payload)
+        if result['status_code'] == 201:
+            # Get the User object from db to return attributes in the response
+            new_user = user_controller.get_user_details(payload['username'])
+            response = jsonify(new_user.get_user_dict())
+            response.status_code = result['status_code']
+        # To handle all the error cases
+        else:
+            print("iin else")
+            response = jsonify({"description": result['description']})
+            response.status_code = result['status_code']
     else:
-        result = user_controller.create_user(payload['email'], payload['first_name'], payload['last_name'], bcrypt.generate_password_hash(payload['password']).decode('utf-8'))
-        response = jsonify({"message": result['message']})
-        response.status_code = result['status_code']
-    return response
+        response = jsonify({"description": "Invalid Payload"})
+        response.status_code = 400
 
+    return response 
 
-###############################Get User Details#########################################
-@app.route('/user/self', methods=['GET', 'POST'])
+###############################Get User Details and Post Update#########################################
+@app.route('/user/self', methods=['GET', 'PUT'])
 @auth.login_required
 def get_user():
     response = make_response()
-    if request.method == 'GET':
-        username = auth.current_user()
-        user =  user_controller.get_user_details(username)
-        print(user.username)
-        if user:
-            response.status_code = 200
-            print(user.username, type(user.first_name), user.last_name)
-            response = make_response(jsonify({
-                    "id": user.id,
-                    "username": user.username, 
-                    "first_name": user.first_name, 
-                    "last_name": user.last_name, 
-                    "account_created": user.account_created, 
-                    "account_updated": user.account_updated
-                }),200)
-        return response
     
-# @app.route('/user/self', methods=['POST'])
-# @auth.login_required
-# def get_user():
-#     response = make_response()
-#     username = auth.current_user()
-#     user =  user_controller.get_user_details(username)
-#     print(user.username)
-#     if user:
-#         response.status_code = 200
-#         print(user.username, type(user.first_name), user.last_name)
-#         response = make_response(jsonify({
-#                 "id": user.id,
-#                 "username": user.username, 
-#                 "first_name": user.first_name, 
-#                 "last_name": user.last_name, 
-#                 "account_created": user.account_created, 
-#                 "account_updated": user.account_updated
-#             }),200)
-#         return response
+    if request.method == 'GET':
+        #Check if request has a body or URL Parameters and raise 400
+        if request.data or request.args:
+            raise BadRequest
+        
+        else:
+            username = auth.current_user()
+            user =  user_controller.get_user_details(username)
+            print(user.username)
+            if user:
+                response.status_code = 200
+                response = make_response(jsonify({
+                        "id": user.id,
+                        "username": user.username, 
+                        "first_name": user.first_name, 
+                        "last_name": user.last_name, 
+                        "account_created": user.account_created, 
+                        "account_updated": user.account_updated
+                    }),200)
+                
+    if request.method == 'PUT':
+        payload = request.get_json(force=True)
+        if pydantic_validators.is_valid_payload(payload, pydantic_validators.UpdateUserPayload):  
+            payload["password"] = bcrypt.generate_password_hash(payload['password']).decode('utf-8') 
+            result = user_controller.update_user_details(auth.current_user(), payload)
+            response.status_code = result['status_code']
+        else:
+            raise BadRequest
+    return response
+    
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
