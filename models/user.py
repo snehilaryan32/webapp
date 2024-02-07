@@ -14,7 +14,7 @@ class User(Base):
     last_name = Column(String)
     password = Column(String)
     account_created = Column(DateTime, default=datetime.datetime.now)
-    account_updated = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.now)
+    account_updated = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
 
     #Constructor to initialize the user object from a dictionary

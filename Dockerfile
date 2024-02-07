@@ -19,5 +19,8 @@ RUN pip install -r requirements.txt
 EXPOSE 8080
 # Expose a port inside the container on which services run
 
-#CMD ["gunicorn" ,"-w", "4", "-k", "uvicorn.workers.UvicornWorker" , "--bind", "0.0.0.0:8000", "fastapi_test:app"]
+
 CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
+# Run the command to start the service
+
+
