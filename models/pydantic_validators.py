@@ -6,8 +6,8 @@ class CreateUserPayload(BaseModel):
     first_name: str
     last_name: str
     password: str
-    # class Config:
-    #     extra = 'forbid'
+    class Config:
+        extra = 'forbid'
 
 class UpdateUserPayload(BaseModel):
     first_name: str
