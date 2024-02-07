@@ -7,7 +7,7 @@ source myenv/bin/activate
 pip3 install -r requirements.txt
 source environment.sh
 
-flask run -p 8089
+flask run -p 8080
 
 # code to test modules 
 python -m db_module.user_controller
