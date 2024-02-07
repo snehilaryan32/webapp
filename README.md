@@ -1,44 +1,35 @@
-# Commands 
 
-## Setting Up the environment
-# Python 
-python3 -m venv myenv
-source myenv/bin/activate
-pip3 install -r requirements.txt
-source environment.sh
 
-flask run -p 8080
+## SSH into the server
+ssh root@162.243.160.168
 
-# code to test modules 
-python -m db_module.user_controller
 
-## Database
-### Start The Service 
+## SCP
+scp webapp-main.zip root@162.243.160.168:/root/cloud-app
+
+# Postgres Set Up
+## Install postgres
+sudo yum install postgresql-server postgresql-contrib
+sudo postgresql-setup initdb
+
 sudo service postgresql start
 sudo service postgresql status
 sudo service postgresql stop
-# set the 
-sudo -u postgres psql
 
-#Connect to db
-\c database_name
+## Create DB
+CREATE DATABASE firstdb;
 
-#Create User
-sudo -u postgres createuser snehilaryan 
-alter user snehilaryan with encrypted password 'your_pass';
+## Create User set password and grant permissions
+CREATE USER aryan WITH PASSWORD ;
+GRANT ALL PRIVILEGES ON DATABASE firstdb TO aryan;
 
-## Add extension for uuid
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+# Python Setup
+sudo yum update
+sudo yum install python3
+sudo yum install python3-pip
 
-## Alter table to add id column
-ALTER TABLE users ADD COLUMN id UUID PRIMARY KEY DEFAULT uuid_generate_v4();
+## Unzip the files in wsl
+sudo yum install unzip
+unzip webapp-main
 
-# Django
-django-admin startproject app
-django-admin startapp healthapp
-
-# Killing processes to free up port
 sudo kill -9 $(sudo lsof -t -i :8080)
-
-# unzip the codebase 
-unzip Snehil_Aryan_002767640_01.zip -d demo
