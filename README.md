@@ -1,5 +1,3 @@
-
-
 ## SSH into the server
 ssh root@162.243.160.168
 
