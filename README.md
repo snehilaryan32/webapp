@@ -1,12 +1,11 @@
-## SSH into the server
+# SSH into the server
 ssh root@162.243.160.168
 
-
-## SCP
+# SCP
 scp webapp-main.zip root@162.243.160.168:/root/cloud-app
 
 # Postgres Set Up
-## Install postgres
+# Install postgres
 sudo yum install postgresql-server postgresql-contrib
 sudo postgresql-setup initdb
 
@@ -26,8 +25,17 @@ sudo yum update
 sudo yum install python3
 sudo yum install python3-pip
 
-## Unzip the files in wsl
+# Unzip the files in wsl
 sudo yum install unzip
 unzip webapp-main
 
 sudo kill -9 $(sudo lsof -t -i :8080)
+
+# Running the application
+python3 -m venv myenv
+source myenv/bin/activate
+export DB_HOST="localhost"
+export DB_PORT=5432
+export DB_NAME="firstdb"
+export DB_USER="aryan"
+export DB_PASSWORD=""
