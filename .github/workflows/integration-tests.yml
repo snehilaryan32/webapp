@@ -16,7 +16,7 @@ jobs:
         env:
           POSTGRES_USER: ${{ secrets.DB_USER }}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          POSTGRES_DB: test_db
+          POSTGRES_DB: postgres
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -34,12 +34,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Wait for PostgreSQL to become ready
-      run: |
-        until PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql -h localhost -U "${{ secrets.DB_USER }}" -d "testdb" -p 5432 -c '\q'; do
-          echo "$(date) - waiting for database to start"
-          sleep 2
-        done
 
     - name: Run integration tests
       run: |
