@@ -4,12 +4,15 @@ import base64
 from flask import json
 from app import app  # Import the app from app.py
 
+
+#############Define Fixtures####################
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
 
+# Define the test data 
 @pytest.fixture
 def user_data():
     return {
