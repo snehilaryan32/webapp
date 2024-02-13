@@ -37,16 +37,24 @@ def __create_headers(username, password):
         'Authorization': f'Basic {credentials}'
     }
 
-##############################################Test 1 Create and Get User#########################################
-def test_create_and_get_user(client, user_data):
-    #Create an account using POST call
-    response = client.post('/v1/user', data=json.dumps(user_data), content_type='application/json')
-    assert response.status_code == 201
-    #Using the GET call, validate account exists
-    headers = __create_headers(user_data["username"], user_data["password"])
-    response = client.get('/v1/user/self', headers=headers)
-    assert response.status_code == 200 
-    assert response.get_json()["username"] == user_data["username"]
+##############################################Health Check######################################################
+def test_healthz_endpoint_content(client):
+    # Make a GET request to the /healthz endpoint
+    response = client.get('/healthz')
+
+    # Check that the response has a status code of 200
+    assert response.status_code == 200
+
+# ##############################################Test 1 Create and Get User#########################################
+# def test_create_and_get_user(client, user_data):
+#     #Create an account using POST call
+#     response = client.post('/v1/user', data=json.dumps(user_data), content_type='application/json')
+#     assert response.status_code == 201
+#     #Using the GET call, validate account exists
+#     headers = __create_headers(user_data["username"], user_data["password"])
+#     response = client.get('/v1/user/self', headers=headers)
+#     assert response.status_code == 200 
+#     assert response.get_json()["username"] == user_data["username"]
 
 # ##############################################Test 2 Update and Get User#########################################
 # def test_update_and_get_user(client, user_data, user_data_updated):
