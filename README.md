@@ -31,3 +31,6 @@ sudo yum install unzip
 unzip webapp-main
 
 sudo kill -9 $(sudo lsof -t -i :8080)
+
+## Pytest 
+python3 -m pytest -p no:warnings
