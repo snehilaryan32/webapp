@@ -36,7 +36,7 @@ jobs:
 
     - name: Wait for PostgreSQL to become ready
       run: |
-        until PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql -h localhost -U "${{ secrets.DB_USER }}" -p 5432 -c '\q'; do
+        until PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql -h localhost -U "${{ secrets.DB_USER }}" -d "testdb" -p 5432 -c '\q'; do
           echo "$(date) - waiting for database to start"
           sleep 2
         done
