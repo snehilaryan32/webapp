@@ -34,6 +34,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Wait for PostgreSQL to become ready
+      run: |
+        until PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql -h localhost -U "${{ secrets.DB_USER }}" -p 5432 -c '\q'; do
+          echo "$(date) - waiting for database to start"
+          sleep 2
+        done
+
     - name: Run integration tests
       run: |
         python3 -m pytest -p no:warnings
