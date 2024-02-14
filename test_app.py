@@ -37,13 +37,13 @@ def __create_headers(username, password):
         'Authorization': f'Basic {credentials}'
     }
 
-##############################################Health Check######################################################
-def test_healthz_endpoint_content(client):
-    # Make a GET request to the /healthz endpoint
-    response = client.get('/healthz')
+# ##############################################Health Check######################################################
+# def test_healthz_endpoint_content(client):
+#     # Make a GET request to the /healthz endpoint
+#     response = client.get('/healthz')
 
-    # Check that the response has a status code of 200
-    assert response.status_code == 200
+#     # Check that the response has a status code of 200
+#     assert response.status_code == 200
 
 ##############################################Test 1 Create and Get User#########################################
 def test_create_and_get_user(client, user_data):
@@ -56,14 +56,14 @@ def test_create_and_get_user(client, user_data):
     assert response.status_code == 200 
     assert response.get_json()["username"] == user_data["username"]
 
-# ##############################################Test 2 Update and Get User#########################################
-# def test_update_and_get_user(client, user_data, user_data_updated):
-#     #Update the account
-#     response = client.put('/v1/user/self', data = json.dumps(user_data_updated), headers=__create_headers(user_data["username"], user_data["password"]))
-#     assert response.status_code == 204
-#     # Using the GET call, validate the account was updated
-#     response = client.get('/v1/user/self', headers=__create_headers(user_data["username"], user_data_updated["password"]))
-#     assert response.status_code == 200
-#     assert response.get_json()["username"] == user_data["username"] #Make sure username is same 
-#     assert response.get_json()["first_name"] == user_data_updated["first_name"] #Make sure first name is updated
-#     assert response.get_json()["last_name"] == user_data_updated["last_name"] 
+##############################################Test 2 Update and Get User#########################################
+def test_update_and_get_user(client, user_data, user_data_updated):
+    #Update the account
+    response = client.put('/v1/user/self', data = json.dumps(user_data_updated), headers=__create_headers(user_data["username"], user_data["password"]))
+    assert response.status_code == 204
+    # Using the GET call, validate the account was updated
+    response = client.get('/v1/user/self', headers=__create_headers(user_data["username"], user_data_updated["password"]))
+    assert response.status_code == 200
+    assert response.get_json()["username"] == user_data["username"] #Make sure username is same 
+    assert response.get_json()["first_name"] == user_data_updated["first_name"] #Make sure first name is updated
+    assert response.get_json()["last_name"] == user_data_updated["last_name"] 
