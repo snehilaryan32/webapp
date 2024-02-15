@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from models import pydantic_validators
 from db_module import db_conn, user_controller
 
+
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 bcrypt = Bcrypt()
@@ -101,7 +102,6 @@ def create_user():
             response.status_code = result['status_code']
         # To handle all the error cases
         else:
-            print("iin else")
             response = jsonify({"description": result['description']})
             response.status_code = result['status_code']
     else:
@@ -125,7 +125,7 @@ def get_user():
         else:
             username = auth.current_user()
             user =  user_controller.get_user_details(username)
-            print(user.username)
+            # print(user.username)
             if user:
                 response.status_code = 200
                 response = make_response(jsonify({
@@ -140,7 +140,7 @@ def get_user():
     if request.method == 'PUT':
         payload = request.get_json(force=True)
         if pydantic_validators.is_valid_payload(payload, pydantic_validators.UpdateUserPayload):  
-            print("verified")
+            # print("verified")
             payload["password"] = bcrypt.generate_password_hash(payload['password']).decode('utf-8') 
             result = user_controller.update_user_details(auth.current_user(), payload)
             response.status_code = result['status_code']
@@ -149,7 +149,9 @@ def get_user():
     
     response = set_response_headers(response)
     return response
-    
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+
+        
+
+    if __name__ == '__main__':
+        app.run(host='0.0.0.0', port=8080, debug=True)

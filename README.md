@@ -31,6 +31,9 @@ unzip webapp-main
 
 sudo kill -9 $(sudo lsof -t -i :8080)
 
+
+## Pytest 
+python3 -m pytest -p no:warnings
 # Running the application
 python3 -m venv myenv
 source myenv/bin/activate
