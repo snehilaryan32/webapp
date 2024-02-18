@@ -41,3 +41,13 @@ sudo kill -9 $(sudo lsof -t -i :8080)
 
 # unzip the codebase 
 unzip Snehil_Aryan_002767640_01.zip -d demo
+
+
+
+gcloud services enable sourcerepo.googleapis.com
+gcloud services enable compute.googleapis.com
+gcloud services enable servicemanagement.googleapis.com
+gcloud services enable storage-api.googleapis.com
+
+#List the services enabled
+gcloud services list --enabled
