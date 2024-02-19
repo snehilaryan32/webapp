@@ -16,7 +16,7 @@ def client():
 @pytest.fixture
 def user_data():
     return {
-        "username": "jackson456@gmail.com",
+        "username": "jackson456@gmail453.com",
         "password": "testpassword",
         "first_name": "Test",
         "last_name": "User"

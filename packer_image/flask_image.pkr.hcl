@@ -5,7 +5,7 @@ variable "project_id" {
 
 variable "source_image_family" {
   type    = string
-  default = "centos-8"
+  default = "centos-stream-8"
 }
 
 variable "ssh_username" {
@@ -33,6 +33,19 @@ variable "machine_type" {
   default = "f1-micro"
 }
 
+variable "db_name" {
+  description = "The name of the database"
+  default     = "firstdb"
+}
+
+variable "db_user" {
+  description = "The database username"
+}
+
+variable "db_pass" {
+  description = "The database password"
+}
+
 
 packer {
   required_plugins {
@@ -50,6 +63,24 @@ source "googlecompute" "flask-app-image" {
   zone = var.zone
   instance_name = var.instance_name
   image_name = var.image_name
-  machine_type = var.machine_type
 }
+
+build {
+  sources = ["source.googlecompute.flask-app-image"]
+
+  provisioner "file" {
+    source      = "./flask-app.zip"
+    destination = "/home/${var.ssh_username}/"
+  }
+
+  provisioner "shell" {
+    script = "./provision.sh"
+    environment_vars = [
+      "DB_NAME=${var.db_name}",
+      "DB_USER=${var.db_user}",
+      "DB_PASS=${var.db_pass}"
+    ]
+  }
+}
+
 
