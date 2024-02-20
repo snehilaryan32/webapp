@@ -1,5 +1,6 @@
 #!/bin/bash
 # Install Python, unzip, postgres
+sudo setenforce 0
 sudo yum install -y unzip
 sudo yum install -y python3
 sudo yum install -y python3-pip

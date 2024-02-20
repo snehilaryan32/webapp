@@ -46,6 +46,16 @@ variable "db_pass" {
   description = "The database password"
 }
 
+variable "db_host" {
+  description = "The database host"
+  default     = "localhost"
+}
+
+variable "db_port" {
+  description = "The database port"
+  default     = 5432
+}
+
 
 packer {
   required_plugins {
@@ -99,6 +109,17 @@ build {
       "DB_PASS=${var.db_pass}"
     ]
   }
+
+  provisioner "shell" {
+  script = "./generate_env_file.sh"
+  environment_vars = [
+    "DB_HOST=${var.db_host}",
+    "DB_PORT=${var.db_port}",
+    "DB_NAME=${var.db_name}",
+    "DB_USER=${var.db_user}",
+    "DB_PASSWORD=${var.db_pass}"
+  ]
+}
 
   provisioner "shell" {
     script = "./setup_service.sh"
