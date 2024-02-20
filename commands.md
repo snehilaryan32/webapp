@@ -55,3 +55,8 @@ gcloud services list --enabled
 zip -r packer_image/flask-app.zip flask-app/
 gcloud compute images delete flask-app
 
+# Systemctl
+
+sudo cp packer_image/flaskapp.service /etc/systemd/system/flaskapp.service
+sudo systemctl status flaskapp
+sudo systemctl stop flaskapp

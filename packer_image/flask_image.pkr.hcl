@@ -73,14 +73,35 @@ build {
     destination = "/home/${var.ssh_username}/"
   }
 
+  provisioner "file" {
+    source      = "./flaskapp.service"
+    destination = "/home/${var.ssh_username}/"
+  }
+
   provisioner "shell" {
-    script = "./provision.sh"
+    script = "./install_dependencies.sh"
+  }
+
+  provisioner "shell" {
+    script = "./setup_postgres.sh"
     environment_vars = [
       "DB_NAME=${var.db_name}",
       "DB_USER=${var.db_user}",
       "DB_PASS=${var.db_pass}"
     ]
   }
-}
 
+  provisioner "shell" {
+    script = "./setup_flask_app.sh"
+    environment_vars = [
+      "DB_NAME=${var.db_name}",
+      "DB_USER=${var.db_user}",
+      "DB_PASS=${var.db_pass}"
+    ]
+  }
+
+  provisioner "shell" {
+    script = "./setup_service.sh"
+  }
+}
 
