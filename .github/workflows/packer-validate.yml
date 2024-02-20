@@ -25,7 +25,7 @@ jobs:
         id: init
         run: |
           cd ./packer_image/ 
-          packer init ./packer_image/flask_image.pkr.hcl"
+          packer init ./packer_image/flask_image.pkr.hcl
 
       - name: Run `packer fmt`
         id: fmt
