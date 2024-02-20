@@ -83,7 +83,7 @@ def db_health_check():
 
 ###############################User Creation############################################
 @app.route('/v1/user', methods=['POST'])
-def create_user():
+def create_user()
     response = make_response()
     response.headers['Content-Type'] = 'application/json'
     payload = request.get_json(force=True)
