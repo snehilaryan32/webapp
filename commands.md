@@ -64,3 +64,12 @@ journalctl -u flaskapp
 curl -v '127.0.0.1:8080/healthz'
 sudo setenforce 0
 sudo systemctl daemon-reload
+
+curl -v --request POST 'http://127.0.0.1:8080/v1/user' \
+--header 'Content-Type: application/json' \
+--data-raw ' {
+    "username": "new_user@gmail.com",
+    "password": "secure_password",
+    "first_name": "New",
+    "last_name": "User"
+}'
