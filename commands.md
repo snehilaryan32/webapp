@@ -62,4 +62,5 @@ sudo systemctl status flaskapp
 sudo systemctl stop flaskapp
 journalctl -u flaskapp
 curl -v '127.0.0.1:8080/healthz'
-
+sudo setenforce 0
+sudo systemctl daemon-reload
