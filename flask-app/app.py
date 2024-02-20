@@ -11,9 +11,9 @@ app = Flask(__name__)
 auth = HTTPBasicAuth()
 bcrypt = Bcrypt()
 
-@app.before_first_request
-def initialize_database():
-    db_conn.db_bootstrap()
+# @app.before_first_request
+# def initialize_database():
+db_conn.db_bootstrap()
 
 
 ###################################Helper Functions############################################

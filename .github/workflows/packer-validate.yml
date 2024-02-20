@@ -28,4 +28,6 @@ jobs:
 
       - name: Run `packer validate`
         id: validate
-        run: packer validate -var 'db_user=${{ secrets.DB_USER }}' -var 'db_pass=${{ secrets.DB_PASSWORD }}' ./packer_image/flask_image.pkr.hcl
+        run: |
+          cd flask-app
+          run: packer validate -var 'db_user=${{ secrets.DB_USER }}' -var 'db_pass=${{ secrets.DB_PASSWORD }}' ./packer_image/flask_image.pkr.hcl
