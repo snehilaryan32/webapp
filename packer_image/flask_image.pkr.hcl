@@ -67,12 +67,12 @@ packer {
 }
 
 source "googlecompute" "flask-app-image" {
-  project_id = var.project_id
+  project_id          = var.project_id
   source_image_family = var.source_image_family
-  ssh_username = var.ssh_username
-  zone = var.zone
-  instance_name = var.instance_name
-  image_name = var.image_name
+  ssh_username        = var.ssh_username
+  zone                = var.zone
+  instance_name       = var.instance_name
+  image_name          = var.image_name
 }
 
 build {
@@ -111,15 +111,15 @@ build {
   }
 
   provisioner "shell" {
-  script = "./generate_env_file.sh"
-  environment_vars = [
-    "DB_HOST=${var.db_host}",
-    "DB_PORT=${var.db_port}",
-    "DB_NAME=${var.db_name}",
-    "DB_USER=${var.db_user}",
-    "DB_PASSWORD=${var.db_pass}"
-  ]
-}
+    script = "./generate_env_file.sh"
+    environment_vars = [
+      "DB_HOST=${var.db_host}",
+      "DB_PORT=${var.db_port}",
+      "DB_NAME=${var.db_name}",
+      "DB_USER=${var.db_user}",
+      "DB_PASSWORD=${var.db_pass}"
+    ]
+  }
 
   provisioner "shell" {
     script = "./setup_service.sh"

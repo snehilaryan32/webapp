@@ -1,8 +1,7 @@
 #!/bin/bash
-# Move the service file, reload systemd manager configuration, and enable the service
-sudo mv /home/packer/flaskapp.service /etc/systemd/system/
+# Move the service file, update selinux policy for the file, reload systemd manager configuration, and enable the service
+sudo mv /home/packer/flaskapp.service /etc/systemd/system/flaskapp.service
 sudo setenforce 0
 sudo systemctl daemon-reload
-ls -l /etc/systemd/system/
 sudo systemctl enable flaskapp
 sudo systemctl start flaskapp
