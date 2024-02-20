@@ -60,3 +60,6 @@ gcloud compute images delete flask-app
 sudo cp packer_image/flaskapp.service /etc/systemd/system/flaskapp.service
 sudo systemctl status flaskapp
 sudo systemctl stop flaskapp
+journalctl -u flaskapp
+curl -v '127.0.0.1:8080/healthz'
+
