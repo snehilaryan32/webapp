@@ -5,3 +5,4 @@ sudo setenforce 0
 sudo systemctl daemon-reload
 ls -l /etc/systemd/system/
 sudo systemctl enable flaskapp
+sudo systemctl start flaskapp
