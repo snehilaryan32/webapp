@@ -3,7 +3,8 @@ Description=My Flask Application
 After=network.target
 
 [Service]
-User=packer
+User=csye6225
+Group=csye6225
 WorkingDirectory=/home/packer/flask-app
 Environment="FLASK_APP=app.py"
 Environment="FLASK_ENV=production"
