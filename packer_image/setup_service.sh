@@ -12,4 +12,4 @@ sudo systemctl daemon-reload
 sudo setenforce 0
 sudo systemctl enable flaskapp
 sudo systemctl start flaskapp
-sudo systemctl status flaskapp
+# sudo systemctl status flaskapp
