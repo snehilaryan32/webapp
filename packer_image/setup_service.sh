@@ -7,4 +7,4 @@ echo "SELINUX=permissive" | sudo tee /etc/selinux/config
 sudo systemctl daemon-l start flaskappreload
 sudo setenforce 0
 sudo systemctl enable flaskapp
-sudo systemct
+sudo systemctl restart flaskapp
