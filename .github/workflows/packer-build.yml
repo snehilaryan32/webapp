@@ -1,8 +1,11 @@
 name: packer-build
 on:
-  pull_request:
-    types: ['closed']
-    branches: [ main ]
+  workflow_run:
+    workflows: ["Integration Test"]
+    branches: [main]
+    types: 
+      - completed
+
 
 env:
   PRODUCT_VERSION: "1.8.6" # or: "latest"
@@ -11,6 +14,7 @@ jobs:
   packer-build:
     runs-on: ubuntu-latest
     name: Run Packer
+    if: github.event.workflow_run.conclusion == 'success'
     steps:
 
       - name: Checkout
