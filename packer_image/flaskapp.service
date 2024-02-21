@@ -10,6 +10,9 @@ Environment="FLASK_APP=app.py"
 Environment="FLASK_ENV=production"
 EnvironmentFile=/home/packer/flaskapp.env
 ExecStart=/home/packer/flask-app/myenv/bin/gunicorn -b :8080 app:app --access-logfile -
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=csye6225
 
 [Install]
 WantedBy=multi-user.target
