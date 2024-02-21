@@ -40,4 +40,4 @@ jobs:
         id: build
         run: |
             cd packer_image 
-            packer build -var 'db_user=${{ secrets.DB_USER }}' -var 'db_pass=${{ secrets.DB_PASSWORD }}' ./flask_image.pkr.hcl
+            packer build -var 'db_user=${{ secrets.DB_USER }}' -var 'db_pass=${{ secrets.DB_PASSWORD }}' -var 'image_name=flask-app-image-pr-${{ github.event.pull_request.number }}' ./flask_image.pkr.hcl
