@@ -9,7 +9,9 @@ sudo chown csye6225:csye6225 /home/packer/flask-app/myenv/bin/gunicorn
 sudo chmod 755 /home/packer/flask-app/myenv/bin/gunicorn
 sudo chown csye6225:csye6225 /home/packer/flaskapp.env
 sudo chmod 644 /home/packer/flaskapp.env
-sudo chmod o+x /home/packer
+sudo chown csye6225:csye6225 /home/packer
+sudo chmod 700 /home/packer
+# sudo chmod o+x /home/packer
 
 echo "SELINUX=permissive" | sudo tee /etc/selinux/config
 sudo systemctl daemon-reload
