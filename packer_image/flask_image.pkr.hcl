@@ -67,9 +67,9 @@ packer {
 }
 
 source "googlecompute" "flask-app-image" {
-  project_id          = var.project_id
-  source_image_family = var.source_image_family
-  ssh_username        = var.ssh_username
+  project_id            = var.project_id
+  source_image_family     = var.source_image_family
+  ssh_username          = var.ssh_username
   zone                = var.zone
   instance_name       = var.instance_name
   image_name          = var.image_name
