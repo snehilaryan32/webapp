@@ -1,6 +1,6 @@
 #!/bin/bash
 # Install Python, unzip, postgres
-# sudo yum update -y
+sudo yum update -y
 sudo yum install -y unzip
 sudo yum install -y python3
 sudo yum install -y python3-pip
