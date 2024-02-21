@@ -1,7 +1,7 @@
 # Setup Postgres
 sudo postgresql-setup initdb
 PG_HBA_CONF="/var/lib/pgsql/data/pg_hba.conf"
-cp $PG_HBA_CONF ${PG_HBA_CONF}.backup
+# cp $PG_HBA_CONF ${PG_HBA_CONF}.backup
 sudo sed -i 's/ident/md5/g' $PG_HBA_CONF
 # sudo sed -i 's/peer/md5/g' $PG_HBA_CONF
 cd /tmp 
