@@ -1,0 +1,43 @@
+name: packer-build
+on:
+  pull_request:
+    branches: [ main ]
+
+env:
+  PRODUCT_VERSION: "1.8.6" # or: "latest"
+
+jobs:
+  packer-build:
+    runs-on: ubuntu-latest
+    name: Run Packer
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Zip the flask app
+        run: "zip -r packer_image/flask-app.zip flask-app/"
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+  
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+  
+      - name: 'Use gcloud CLI'
+        run: 'gcloud info'
+
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+
+      - name: Run `packer init`
+        id: init
+        run: "packer init ./packer_image/flask_image.pkr.hcl"
+
+      - name: Run `packer build`
+        id: build
+        run: |
+            cd packer_image 
+            packer build -var 'db_user=${{ secrets.DB_USER }}' -var 'db_pass=${{ secrets.DB_PASSWORD }}' ./flask_image.pkr.hcl
