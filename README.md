@@ -13,6 +13,8 @@ sudo service postgresql start
 sudo service postgresql status
 sudo service postgresql stop
 
+
+
 ## Create DB
 CREATE DATABASE firstdb;
 
