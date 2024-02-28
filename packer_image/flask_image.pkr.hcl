@@ -38,13 +38,13 @@ variable "db_name" {
   default     = "firstdb"
 }
 
-variable "db_user" {
-  description = "The database username"
-}
+# variable "db_user" {
+#   description = "The database username"
+# }
 
-variable "db_pass" {
-  description = "The database password"
-}
+# variable "db_pass" {
+#   description = "The database password"
+# }
 
 variable "db_host" {
   description = "The database host"
