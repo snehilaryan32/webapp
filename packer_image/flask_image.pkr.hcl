@@ -92,34 +92,29 @@ build {
     script = "./install_dependencies.sh"
   }
 
-  provisioner "shell" {
-    script = "./setup_postgres.sh"
-    environment_vars = [
-      "DB_NAME=${var.db_name}",
-      "DB_USER=${var.db_user}",
-      "DB_PASS=${var.db_pass}"
-    ]
-  }
+  # provisioner "shell" {
+  #   script = "./setup_postgres.sh"
+  #   environment_vars = [
+  #     "DB_NAME=${var.db_name}",
+  #     "DB_USER=${var.db_user}",
+  #     "DB_PASS=${var.db_pass}"
+  #   ]
+  # }
 
   provisioner "shell" {
     script = "./setup_flask_app.sh"
-    environment_vars = [
-      "DB_NAME=${var.db_name}",
-      "DB_USER=${var.db_user}",
-      "DB_PASS=${var.db_pass}"
-    ]
   }
 
-  provisioner "shell" {
-    script = "./generate_env_file.sh"
-    environment_vars = [
-      "DB_HOST=${var.db_host}",
-      "DB_PORT=${var.db_port}",
-      "DB_NAME=${var.db_name}",
-      "DB_USER=${var.db_user}",
-      "DB_PASSWORD=${var.db_pass}"
-    ]
-  }
+  # provisioner "shell" {
+  #   script = "./generate_env_file.sh"
+  #   environment_vars = [
+  #     "DB_HOST=${var.db_host}",
+  #     "DB_PORT=${var.db_port}",
+  #     "DB_NAME=${var.db_name}",
+  #     "DB_USER=${var.db_user}",
+  #     "DB_PASSWORD=${var.db_pass}"
+  #   ]
+  # }
 
   provisioner "shell" {
     script = "./setup_service.sh"
