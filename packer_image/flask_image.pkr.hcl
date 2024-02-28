@@ -101,7 +101,7 @@ build {
   }
 
   post-processor "print-image-name" {
-  inline = ["echo 'Image name: ${var.image_name}'"]
+    inline = ["echo 'Image name: ${var.image_name}'"]
   }
 }
 
