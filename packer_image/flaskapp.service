@@ -1,5 +1,6 @@
 [Unit]
 Description=My Flask Application
+ConditionPathExists = /home/packer/flaskapp.env
 After=network.target
 
 [Service]
