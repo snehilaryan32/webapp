@@ -73,3 +73,5 @@ curl -v --request POST 'http://127.0.0.1:8080/v1/user' \
     "first_name": "New",
     "last_name": "User"
 }'
+
+packer build -var 'image_name=flask-app-image-latest' ./flask_image.pkr.hcl
