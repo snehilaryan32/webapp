@@ -100,7 +100,7 @@ build {
     script = "./setup_service.sh"
   }
 
-  post-processor "print-image-name" {
+  post-processor "shell-local" {
     inline = ["echo 'Image name: ${var.image_name}'"]
   }
 }
