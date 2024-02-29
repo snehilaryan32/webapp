@@ -42,5 +42,6 @@ source myenv/bin/activate
 export DB_HOST="localhost"
 export DB_PORT=5432
 export DB_NAME="firstdb"
+
 export DB_USER="aryan"
 export DB_PASSWORD=""
