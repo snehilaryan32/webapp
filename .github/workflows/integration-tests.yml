@@ -35,7 +35,7 @@ jobs:
       run: |
         sudo mkdir /var/log/my-app/
         cd flask-app
-        python3 -m pytest -p no:warnings
+        sudo python3 -m pytest -p no:warnings
       env:
         DB_HOST: localhost
         DB_PORT: 5432
