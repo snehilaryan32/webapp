@@ -34,7 +34,7 @@ jobs:
     - name: Run integration tests
       run: |
         cd flask-app
-        sudo python3 -m pytest -p no:warnings
+        python3 -m pytest -p no:warnings
       env:
         DB_HOST: localhost
         DB_PORT: 5432
