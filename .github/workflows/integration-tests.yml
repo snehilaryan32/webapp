@@ -33,9 +33,7 @@ jobs:
 
     - name: Run integration tests
       run: |
-        sudo mkdir /var/log/my-app/
         cd flask-app
-        pip install pytest
         sudo python3 -m pytest -p no:warnings
       env:
         DB_HOST: localhost
@@ -43,3 +41,4 @@ jobs:
         DB_NAME: postgres
         DB_USER: ${{ secrets.DB_USER }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        LOG_FILE_PATH: record.log

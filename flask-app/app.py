@@ -5,6 +5,7 @@ from werkzeug.exceptions import BadRequest, MethodNotAllowed
 from pydantic import ValidationError    
 import logging
 from pythonjsonlogger import jsonlogger
+import os
 
 from models import pydantic_validators
 from db_module import db_conn, user_controller
@@ -17,7 +18,8 @@ bcrypt = Bcrypt()
 
 ###################################Logging#####################################################
 # Set up JSON logging
-logHandler = logging.FileHandler('/var/log/my-app/record.log')
+log_file_path = os.getenv('LOG_FILE_PATH')
+logHandler = logging.FileHandler(log_file_path)
 formatter = jsonlogger.JsonFormatter('%(asctime)s %(levelname)s %(message)s')
 logHandler.setFormatter(formatter)
 logger = logging.getLogger()
