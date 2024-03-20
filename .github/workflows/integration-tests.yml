@@ -35,6 +35,7 @@ jobs:
       run: |
         sudo mkdir /var/log/my-app/
         cd flask-app
+        pip install pytest
         sudo python3 -m pytest -p no:warnings
       env:
         DB_HOST: localhost
