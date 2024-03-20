@@ -33,7 +33,7 @@ jobs:
 
     - name: Run integration tests
       run: |
-        mkdir /var/log/my-app/
+        sudo mkdir /var/log/my-app/
         cd flask-app
         python3 -m pytest -p no:warnings
       env:
