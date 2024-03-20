@@ -61,7 +61,22 @@ def handle_method_not_allowed(e):
 def handle_404(e):
     response = jsonify({})
     response = set_response_headers(response)
+    logging.error('Resource Not Found')
     return response, 404
+
+@app.errorhandler(401)
+def handle_401(e):
+    response = jsonify({"message": "Unauthorized: Invalid username or password"})
+    response = set_response_headers(response)
+    logging.error('Unauthorized: Invalid username or password')
+    return response, 401
+
+@app.errorhandler(500)
+def handle_500(e):
+    response = jsonify({"message": "Wrong Username or Password"})
+    response = set_response_headers(response)
+    logging.error('Wrong Username or Password')
+    return response, 500
 
 ###################################Basic Auth############################################
 @auth.verify_password
@@ -69,8 +84,8 @@ def verify_password(username, password):
     hash_in_db = user_controller.get_hashed_password(username)
     if hash_in_db and bcrypt.check_password_hash(hash_in_db, password):
         return username
-
-
+    else:
+        return False
 ###############################Health Check############################################
 @app.route('/healthz', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
 def db_health_check():
@@ -162,6 +177,8 @@ def get_user():
                         "account_updated": user.account_updated
                     }),200)
                 logging.info('User Details Fetched')
+            # else:
+            #     respose = make_response(jsonify({"message":"wrong username"}), 401)
                 
     if request.method == 'PUT':
         payload = request.get_json(force=True)
