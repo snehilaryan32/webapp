@@ -3,17 +3,27 @@ from flask_httpauth import HTTPBasicAuth
 from flask_bcrypt import Bcrypt
 from werkzeug.exceptions import BadRequest, MethodNotAllowed
 from pydantic import ValidationError    
+import logging
+from pythonjsonlogger import jsonlogger
+
 from models import pydantic_validators
 from db_module import db_conn, user_controller
 
-
+db_conn.db_bootstrap()
+logging.basicConfig(filename='record.log', level=logging.DEBUG)
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 bcrypt = Bcrypt()
 
-# @app.before_first_request
-# def initialize_database():
-db_conn.db_bootstrap()
+###################################Logging#####################################################
+# Set up JSON logging
+logHandler = logging.FileHandler('/var/log/my-app/record.log')
+formatter = jsonlogger.JsonFormatter('%(asctime)s %(levelname)s %(message)s')
+logHandler.setFormatter(formatter)
+logger = logging.getLogger()
+logger.addHandler(logHandler)
+logger.setLevel(logging.DEBUG)
+logging.info('App Started')
 
 
 ###################################Helper Functions############################################
@@ -29,6 +39,7 @@ def set_response_headers(response):
 ###Check for unnecessary Authorization###
 def __check_for_unnecessary_auth():
     if 'Authorization' in request.headers:
+        logging.error('Authorization should not be provided')
         raise BadRequest(description="Authorization should not be provided")
 
 ###################################Error Handling############################################
@@ -61,31 +72,36 @@ def verify_password(username, password):
 ###############################Health Check############################################
 @app.route('/healthz', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'])
 def db_health_check():
+    logging.info('Health Check')
     response = make_response()
     response.data =  ""
     #Check if the request method is not GET and raise 405
     if request.method != 'GET':
         response.status_code = 405
+        logging.error('Wrong Method Used for Health Check')
 
     else:
-        __check_for_unnecessary_auth
+        __check_for_unnecessary_auth()
         #Check if the request has a payload or URL Parameters were provided and raise 400
         if request.data or request.args:
             response.status_code = 400
+            logging.error('Payload or URL Parameters Provided for Health Check')
         
         #Check if db connection is successful and raise 200
         elif db_conn.db_connect() == True:
             response.status_code = 200
+            logging.info('Health Check Successful')
 
         #Check if db connection is unsuccessful and raise 503
         elif db_conn.db_connect() == False:
             response.status_code = 503
+            logging.error('Health Check Failed')
 
     response = set_response_headers(response)
     return response
 
 ###############################User Creation############################################
-@app.route('/v1/user', methods=['POST'])
+@app.route('/v1/user', methods=['POST']) #Add error
 def create_user():
     response = make_response()
     response.headers['Content-Type'] = 'application/json'
@@ -96,20 +112,23 @@ def create_user():
     #Check if all the required fields are provided
     if pydantic_validators.is_valid_payload(payload, pydantic_validators.CreateUserPayload): 
         #Hash the password
-        payload["password"] = bcrypt.generate_password_hash(payload['password']).decode('utf-8')
+        payload["password"] = bcrypt.generate_password_hash(payload['password']).decode('utf-8') 
         result = user_controller.create_user(payload)
         if result['status_code'] == 201:
             # Get the User object from db to return attributes in the response
             new_user = user_controller.get_user_details(payload['username'])
             response = jsonify(new_user.get_user_dict())
             response.status_code = result['status_code']
+            logging.info('User Created')
         # To handle all the error cases
         else:
             response = jsonify({"description": result['description']})
             response.status_code = result['status_code']
+            logging.error(result['description'])    
     else:
         response = jsonify({"description": "Invalid Payload"})
         response.status_code = 400
+        logging.error('Invalid Payload For User Creation')
 
     response = set_response_headers(response)
     return response 
@@ -123,6 +142,7 @@ def get_user():
     if request.method == 'GET':
         #Check if request has a body or URL Parameters and raise 400
         if request.data or request.args:
+            logging.error('Payload or URL Parameters Provided for User Details')
             raise BadRequest
         
         else:
@@ -139,6 +159,7 @@ def get_user():
                         "account_created": user.account_created, 
                         "account_updated": user.account_updated
                     }),200)
+                logging.info('User Details Fetched')
                 
     if request.method == 'PUT':
         payload = request.get_json(force=True)
@@ -147,14 +168,15 @@ def get_user():
             payload["password"] = bcrypt.generate_password_hash(payload['password']).decode('utf-8') 
             result = user_controller.update_user_details(auth.current_user(), payload)
             response.status_code = result['status_code']
+            logging.info('User Details Updated')
         else:
+            logging.error('Invalid Payload for User Update')
             raise BadRequest
     
     response = set_response_headers(response)
     return response
 
 
-        
 
     if __name__ == '__main__':
         app.run(host='0.0.0.0', port=8080, debug=True)
