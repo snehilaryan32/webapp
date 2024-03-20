@@ -1,18 +1,17 @@
-from pydantic import BaseModel, EmailStr
-from pydantic import ValidationError
+from pydantic import BaseModel, EmailStr, ValidationError, constr
 
 class CreateUserPayload(BaseModel):
     username: EmailStr
     first_name: str
     last_name: str
-    password: str
+    password: constr(min_length=4)
     class Config:
         extra = 'forbid'
 
 class UpdateUserPayload(BaseModel):
     first_name: str
     last_name: str
-    password: str
+    password: constr(min_length=4)
     class Config:
         extra = 'forbid'
 

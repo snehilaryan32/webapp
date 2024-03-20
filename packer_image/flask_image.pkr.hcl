@@ -20,7 +20,7 @@ variable "zone" {
 
 variable "image_name" {
   type    = string
-  default = "flask-app"
+  default = "flask-app-assignment6"
 }
 
 variable "instance_name" {
@@ -85,6 +85,11 @@ build {
 
   provisioner "file" {
     source      = "./flaskapp.service"
+    destination = "/home/${var.ssh_username}/"
+  }
+
+  provisioner "file" {
+    source      = "./config.yaml"
     destination = "/home/${var.ssh_username}/"
   }
 
