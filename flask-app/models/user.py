@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 import datetime
@@ -15,6 +15,7 @@ class User(Base):
     password = Column(String)
     account_created = Column(DateTime, default=datetime.datetime.now)
     account_updated = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
+    verified = Column(Boolean, default=False)
 
 
     #Constructor to initialize the user object from a dictionary
@@ -33,5 +34,6 @@ class User(Base):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "account_created": self.account_created,
-            "account_updated": self.account_updated
+            "account_updated": self.account_updated, 
+            "account_verified": self.verified
         }
