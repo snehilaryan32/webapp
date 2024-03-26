@@ -6,9 +6,9 @@ from pydantic import ValidationError
 import logging
 from pythonjsonlogger import jsonlogger
 import os
-
 from models import pydantic_validators
 from db_module import db_conn, user_controller
+from pubsub_module import publish_msg
 
 db_conn.db_bootstrap()
 logging.basicConfig(filename='record.log', level=logging.DEBUG)
@@ -71,12 +71,12 @@ def handle_401(e):
     logging.error('Unauthorized: Invalid username or password')
     return response, 401
 
-@app.errorhandler(500)
-def handle_500(e):
-    response = jsonify({"message": "Wrong Username or Password"})
-    response = set_response_headers(response)
-    logging.error('Wrong Username or Password')
-    return response, 500
+# @app.errorhandler(500)
+# def handle_500(e):
+#     response = jsonify({"message": "Wrong Username or Password"})
+#     response = set_response_headers(response)
+#     logging.error('Wrong Username or Password')
+#     return response, 500
 
 ###################################Basic Auth############################################
 @auth.verify_password
@@ -118,7 +118,7 @@ def db_health_check():
     return response
 
 ###############################User Creation############################################
-@app.route('/v1/user', methods=['POST']) #Add error
+@app.route('/v1/user', methods=['POST']) 
 def create_user():
     response = make_response()
     response.headers['Content-Type'] = 'application/json'
@@ -133,9 +133,12 @@ def create_user():
         result = user_controller.create_user(payload)
         if result['status_code'] == 201:
             # Get the User object from db to return attributes in the response
-            new_user = user_controller.get_user_details(payload['username'])
-            response = jsonify(new_user.get_user_dict())
+            new_user = user_controller.get_user_details(payload['username']).get_user_dict()
+            response = jsonify(new_user)
             response.status_code = result['status_code']
+            # data_to_pub = {"first_name": new_user.first_name, "last_name": new_user.last_name, "username": new_user.username, "token_id": str(new_user.id)} 
+            data_to_pub = publish_msg.generate_message_dict(new_user)
+            publish_msg.publish_message(data_to_pub) #Publish the user details to Pub/Sub
             logging.info('User Created')
         # To handle all the error cases
         else:
