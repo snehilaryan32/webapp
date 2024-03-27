@@ -1,6 +1,7 @@
 import os
 from sqlalchemy import create_engine, text
 from models.user import User, Base
+from models.email_tracker import EmailTracker, Base
 
 #Pick DB credentials from environment variables
 host = os.getenv("DB_HOST")

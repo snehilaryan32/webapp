@@ -72,19 +72,23 @@ def update_user_details(username, updated_user_details):
     return {"status_code": status_code}
 
 #################################################Verify User##############################################
-def verify_user(username):
+def verify_user(id):
     engine = db_conn.db_engine()
     status_code = None
     if engine:
         Session = sessionmaker(bind=db_conn.db_engine())
         session = Session()
-        user = session.query(User).filter_by(username=username).first()
-        user.verified = True
-        session.commit()
-        session.close()
-        status_code = 204
+        user = session.query(User).filter_by(id=id).first()
+        if user:
+            user.verified = True
+            session.commit()
+            session.close()
+            status_code = 200
+        else:
+            status_code = 404 #User Not found
     else:
         status_code = 503
         
     return {"status_code": status_code}
+
 
