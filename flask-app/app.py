@@ -138,7 +138,8 @@ def create_user():
             response.status_code = result['status_code']
             # data_to_pub = {"first_name": new_user.first_name, "last_name": new_user.last_name, "username": new_user.username, "token_id": str(new_user.id)} 
             data_to_pub = publish_msg.generate_message_dict(new_user)
-            publish_msg.publish_message(data_to_pub) #Publish the user details to Pub/Sub
+            if os.getenv('ENVIRONMENT') == 'production':
+                publish_msg.publish_message(data_to_pub) #Publish the user details to Pub/Sub
             logging.info('User Created')
         # To handle all the error cases
         else:
@@ -152,6 +153,22 @@ def create_user():
 
     response = set_response_headers(response)
     return response 
+
+###############################Verify User Email Id#####################################################
+@app.route('/verify-email/<token_uuid>', methods=['GET'])
+def verify_email(token_uuid):
+    response = make_response()
+    result = user_controller.verify_user(token_uuid)
+
+    if result["status_code"] == 200:
+        response = jsonify({"message": "Email verified successfully."})
+        response.status_code = 200
+        logging.info('Email Verified')
+    else:
+        response = jsonify({"message": "An error occurred during verification."})
+        response.status_code = 500
+        logging.warning('Error Occurred During Email Verification')
+    return response
 
 ###############################Get User Details and Post Update#########################################
 @app.route('/v1/user/self', methods=['GET', 'PUT'])
@@ -170,27 +187,35 @@ def get_user():
             user =  user_controller.get_user_details(username)
             # print(user.username)
             if user:
-                response.status_code = 200
-                response = make_response(jsonify({
-                        "id": user.id,
-                        "username": user.username, 
-                        "first_name": user.first_name, 
-                        "last_name": user.last_name, 
-                        "account_created": user.account_created, 
-                        "account_updated": user.account_updated
-                    }),200)
-                logging.info('User Details Fetched')
+                if user.verified == True:
+                    response.status_code = 200
+                    response = make_response(jsonify({
+                            "id": user.id,
+                            "username": user.username, 
+                            "first_name": user.first_name, 
+                            "last_name": user.last_name, 
+                            "account_created": user.account_created, 
+                            "account_updated": user.account_updated
+                        }),200)
+                    logging.info('User Details Fetched')
+                else:
+                    response = make_response(jsonify({"message":"Email not verified"}), 403)
+                    logging.warning('Email Not Verified for User Details')
             # else:
             #     respose = make_response(jsonify({"message":"wrong username"}), 401)
                 
     if request.method == 'PUT':
         payload = request.get_json(force=True)
         if pydantic_validators.is_valid_payload(payload, pydantic_validators.UpdateUserPayload):  
-            # print("verified")
-            payload["password"] = bcrypt.generate_password_hash(payload['password']).decode('utf-8') 
-            result = user_controller.update_user_details(auth.current_user(), payload)
-            response.status_code = result['status_code']
-            logging.info('User Details Updated')
+            user = user_controller.get_user_details(auth.current_user())
+            if user.verified == True:  
+                payload["password"] = bcrypt.generate_password_hash(payload['password']).decode('utf-8') 
+                result = user_controller.update_user_details(auth.current_user(), payload)
+                response.status_code = result['status_code']
+                logging.info('User Details Updated')
+            else:
+                response = make_response(jsonify({"message":"Email not verified"}), 403)
+                logging.warning('Email Not Verified for User Update')
         else:
             logging.error('Invalid Payload for User Update')
             raise BadRequest

@@ -49,6 +49,7 @@ def __create_headers(username, password):
 def test_create_and_get_user(client, user_data):
     #Create an account using POST call
     response = client.post('/v1/user', data=json.dumps(user_data), content_type='application/json')
+
     assert response.status_code == 201
     #Using the GET call, validate account exists
     headers = __create_headers(user_data["username"], user_data["password"])
