@@ -162,8 +162,10 @@ def verify_email(token_uuid):
     response = make_response()
     result = user_controller.verify_user(token_uuid)
     expire_time = user_controller.get_email_tracker_details(token_uuid)
-
-    if datetime.now() > expire_time:
+    print(expire_time)
+    # expire_time = datetime(*expire_time)
+    # print(expire_time)
+    if datetime.now() > expire_time[0]:
         response = jsonify({"message": "The link has expired."})
         response.status_code = 400
         logging.warning('Link Expired')
