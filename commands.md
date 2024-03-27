@@ -4,7 +4,7 @@
 # Python 
 python3 -m venv myenv
 source myenv/bin/activate
-pip3 install -r requirements.txt
+pip3 install -r flask-app/requirements.txt
 
 flask run -p 8080
 

@@ -37,3 +37,9 @@ class User(Base):
             "account_updated": self.account_updated, 
             "account_verified": self.verified
         }
+    
+class EmailTracker(Base):
+    __tablename__ = 'email_tracker'
+    verification_token = Column(String)
+    email = Column(String)
+    sent_time = Column(DateTime, default=datetime.datetime.now)
