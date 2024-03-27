@@ -40,6 +40,6 @@ class User(Base):
     
 class EmailTracker(Base):
     __tablename__ = 'email_tracker'
-    verification_token = Column(String)
+    verification_token = Column(String, primary_key=True)
     email = Column(String)
     expire_time = Column(DateTime)
