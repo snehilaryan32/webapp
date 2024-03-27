@@ -2,11 +2,15 @@ from google.cloud import pubsub_v1
 import json
 import os
 
-# Initialize the Pub/Sub client with details from the environment variables
-publisher = pubsub_v1.PublisherClient()
-project_id = os.getenv("PROJECT_ID")
-topic_id = os.getenv("PUBSUB_TOPIC_ID")
-topic_path = publisher.topic_path(project_id, topic_id)
+
+try:
+    # Initialize the Pub/Sub client with details from the environment variables
+    publisher = pubsub_v1.PublisherClient()
+    project_id = os.getenv("PROJECT_ID")
+    topic_id = os.getenv("PUBSUB_TOPIC_ID")
+    topic_path = publisher.topic_path(project_id, topic_id)
+except Exception as e:
+    print(f"An error occurred: {e}")
 
 def publish_message(data):
     data = json.dumps(data).encode("utf-8")
