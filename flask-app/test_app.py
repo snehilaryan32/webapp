@@ -3,6 +3,8 @@ import json
 import base64
 from flask import json
 from app import app  # Import the app from app.py
+from db_module import user_controller
+
 
 
 #############Define Fixtures####################
@@ -19,8 +21,7 @@ def user_data():
         "username": "jackson456@gmail453.com",
         "password": "testpassword",
         "first_name": "Test",
-        "last_name": "User", 
-        "account_verified": True
+        "last_name": "User"
     }
 
 @pytest.fixture
@@ -50,7 +51,7 @@ def __create_headers(username, password):
 def test_create_and_get_user(client, user_data):
     #Create an account using POST call
     response = client.post('/v1/user', data=json.dumps(user_data), content_type='application/json')
-
+    user_controller.verify_user(user_controller.get_user_details(user_data["username"]).id)
     assert response.status_code == 201
     #Using the GET call, validate account exists
     headers = __create_headers(user_data["username"], user_data["password"])
