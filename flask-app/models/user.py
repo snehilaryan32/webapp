@@ -42,4 +42,4 @@ class EmailTracker(Base):
     __tablename__ = 'email_tracker'
     verification_token = Column(String)
     email = Column(String)
-    sent_time = Column(DateTime, default=datetime.datetime.now)
+    expire_time = Column(DateTime)

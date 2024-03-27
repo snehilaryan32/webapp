@@ -19,7 +19,8 @@ def user_data():
         "username": "jackson456@gmail453.com",
         "password": "testpassword",
         "first_name": "Test",
-        "last_name": "User"
+        "last_name": "User", 
+        "account_verified": True
     }
 
 @pytest.fixture

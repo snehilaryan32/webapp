@@ -1,5 +1,5 @@
 from . import db_conn
-from models.user import User, Base
+from models.user import User, EmailTracker, Base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError
 import datetime
@@ -90,5 +90,21 @@ def verify_user(id):
         status_code = 503
         
     return {"status_code": status_code}
+
+
+#################################################Track emails##########################################
+def get_email_tracker_details(token):
+    engine = db_conn.db_engine()
+    if engine:
+        Session = sessionmaker(bind=db_conn.db_engine())
+        session = Session()
+        try:
+            email_tracker = session.query(EmailTracker.expire_time).filter_by(verification_token=token).first()
+            session.close()
+            return email_tracker
+        except Exception as e:  
+            return None
+    else:
+        return False
 
 
