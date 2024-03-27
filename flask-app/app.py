@@ -9,6 +9,8 @@ import os
 from models import pydantic_validators
 from db_module import db_conn, user_controller
 from pubsub_module import publish_msg
+from datetime import datetime
+
 
 db_conn.db_bootstrap()
 logging.basicConfig(filename='record.log', level=logging.DEBUG)
@@ -159,15 +161,22 @@ def create_user():
 def verify_email(token_uuid):
     response = make_response()
     result = user_controller.verify_user(token_uuid)
+    expire_time = user_controller.get_email_tracker_details(token_uuid)
 
-    if result["status_code"] == 200:
-        response = jsonify({"message": "Email verified successfully."})
-        response.status_code = 200
-        logging.info('Email Verified')
+    if datetime.now() > expire_time:
+        response = jsonify({"message": "The link has expired."})
+        response.status_code = 400
+        logging.warning('Link Expired')
     else:
-        response = jsonify({"message": "An error occurred during verification."})
-        response.status_code = 500
-        logging.warning('Error Occurred During Email Verification')
+        result = user_controller.verify_user(token_uuid)
+        if result["status_code"] == 200:
+            response = jsonify({"message": "Email verified successfully."})
+            response.status_code = 200
+            logging.info('Email Verified')
+        else:
+            response = jsonify({"message": "An error occurred during verification."})
+            response.status_code = 500
+            logging.warning('Error Occurred During Email Verification')
     return response
 
 ###############################Get User Details and Post Update#########################################
