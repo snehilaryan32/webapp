@@ -78,7 +78,7 @@ def handle_401(e):
 #     response = jsonify({"message": "Wrong Username or Password"})
 #     response = set_response_headers(response)
 #     logging.error('Wrong Username or Password')
-#     return response, 500
+#     return response, 500, 404
 
 ###################################Basic Auth############################################
 @auth.verify_password
@@ -160,7 +160,6 @@ def create_user():
 @app.route('/verify-email/<token_uuid>', methods=['GET'])
 def verify_email(token_uuid):
     response = make_response()
-    result = user_controller.verify_user(token_uuid)
     expire_time = user_controller.get_email_tracker_details(token_uuid)
     print(expire_time)
     # expire_time = datetime(*expire_time)
