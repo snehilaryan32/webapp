@@ -73,12 +73,12 @@ def handle_401(e):
     logging.error('Unauthorized: Invalid username or password')
     return response, 401
 
-# @app.errorhandler(500)
-# def handle_500(e):
-#     response = jsonify({"message": "Wrong Username or Password"})
-#     response = set_response_headers(response)
-#     logging.error('Wrong Username or Password')
-#     return response, 500, 404
+@app.errorhandler(500)
+def handle_500(e):
+    response = jsonify({"message": "Wrong Username or Password"})
+    response = set_response_headers(response)
+    logging.error('Wrong Username or Password')
+    return response, 500, 404
 
 ###################################Basic Auth############################################
 @auth.verify_password
@@ -101,18 +101,20 @@ def db_health_check():
 
     else:
         __check_for_unnecessary_auth()
+        conn = db_conn.db_connect()
         #Check if the request has a payload or URL Parameters were provided and raise 400
         if request.data or request.args:
             response.status_code = 400
             logging.error('Payload or URL Parameters Provided for Health Check')
         
         #Check if db connection is successful and raise 200
-        elif db_conn.db_connect() == True:
+        elif conn == True:
             response.status_code = 200
+            db_conn.db_close(conn)
             logging.info('Health Check Successful')
 
         #Check if db connection is unsuccessful and raise 503
-        elif db_conn.db_connect() == False:
+        elif conn == False:
             response.status_code = 503
             logging.error('Health Check Failed')
 
