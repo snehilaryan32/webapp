@@ -53,7 +53,7 @@ gcloud services list --enabled
 
 #Zip the package
 zip -r packer_image/flask-app.zip flask-app/
-gcloud compute images delete flask-app
+gcloud compute images delete flask-app-new
 
 # Systemctl
 

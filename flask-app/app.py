@@ -68,7 +68,7 @@ def handle_404(e):
 
 @app.errorhandler(401)
 def handle_401(e):
-    response = jsonify({"message": "Unauthorized: Invalid username or password"})
+    response = jsonify({"message": "Unauthorized"})
     response = set_response_headers(response)
     logging.error('Unauthorized: Invalid username or password')
     return response, 401
@@ -78,7 +78,7 @@ def handle_500(e):
     response = jsonify({"message": "Wrong Username or Password"})
     response = set_response_headers(response)
     logging.error('Wrong Username or Password')
-    return response, 500, 404
+    return response, 404
 
 ###################################Basic Auth############################################
 @auth.verify_password
@@ -115,6 +115,7 @@ def db_health_check():
 
         #Check if db connection is unsuccessful and raise 503
         elif conn == False:
+            db_conn.db_close(conn)
             response.status_code = 503
             logging.error('Health Check Failed')
 
@@ -166,20 +167,25 @@ def verify_email(token_uuid):
     print(expire_time)
     # expire_time = datetime(*expire_time)
     # print(expire_time)
-    if datetime.now() > expire_time[0]:
-        response = jsonify({"message": "The link has expired."})
-        response.status_code = 400
-        logging.warning('Link Expired')
-    else:
-        result = user_controller.verify_user(token_uuid)
-        if result["status_code"] == 200:
-            response = jsonify({"message": "Email verified successfully."})
-            response.status_code = 200
-            logging.info('Email Verified')
+    try:
+        if datetime.now() > expire_time[0]:  #This will throw exception if the token is not found
+            response = jsonify({"message": "The link has expired."})
+            response.status_code = 400
+            logging.warning('Link Expired')
         else:
-            response = jsonify({"message": "An error occurred during verification."})
-            response.status_code = 500
-            logging.warning('Error Occurred During Email Verification')
+            result = user_controller.verify_user(token_uuid)
+            if result["status_code"] == 200:
+                response = jsonify({"message": "Email verified successfully."})
+                response.status_code = 200
+                logging.info('Email Verified')
+            else:
+                response = jsonify({"message": "An error occurred during verification."})
+                response.status_code = 500
+                logging.warning('Error Occurred During Email Verification')
+    except Exception as e:
+        response = jsonify({"message": "Invalid Link"})
+        response.status_code = 404
+        logging.warning('Invalid Token Used For Verification')
     return response
 
 ###############################Get User Details and Post Update#########################################
