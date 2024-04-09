@@ -58,6 +58,7 @@ jobs:
       - name: 'Build instance template'
         id: 'build-instance-template'
         run: |
+          INSTANCE_TEMPLATE_NAME=template-${{ env.IMAGE_NAME }}
           gcloud compute instance-templates create test-template-actions \
           --machine-type=e2-small \
           --boot-disk-size=20 \
@@ -68,3 +69,4 @@ jobs:
           --tags=webapp \
           --region=us-central1\
           --project=csye6225-414117
+          echo "INSTANCE_TEMPLATE_NAME=${INSTANCE_TEMPLATE_NAME}" >> $GITHUB_ENV
