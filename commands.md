@@ -79,3 +79,46 @@ packer build -var 'image_name=flask-app' ./flask_image.pkr.hcl
 gcloud projects add-iam-policy-binding csye6225-414117 --member="serviceAccount:svc-packer@csye6225-414117.iam.gserviceaccount.com" --role="roles/secretmanager.admin"
 
 gcloud secrets versions access latest --secret="db-private-ip"
+
+
+
+gcloud compute instance-templates create INSTANCE_TEMPLATE_NAME \
+  --machine-type=e2-small \
+  --boot-disk-size=20 \
+  --boot-disk-type=pd-balanced \
+  --image=flask-app-new \
+  --subnet=webapp \
+  --network-tier=app-vpc-assignment7 \
+  --tags=webapp \
+  --metadata=startup-script="#! /bin/bash
+    touch ${local.env_file_path}
+    echo 'DB_HOST=${local.db_host}' >> /home/packer/flaskapp.env
+    echo 'DB_PORT=5432' >> ${local.env_file_path}
+    echo 'DB_NAME=${var.db_name}' >> /home/packer/flaskapp.env
+    echo 'DB_USER=${var.db_user}' >> /home/packer/flaskapp.env
+    echo 'DB_PASSWORD=${random_password.password.result}' >> /home/packer/flaskapp.env
+    echo 'LOG_FILE_PATH=${var.log_file_path}' >> /home/packer/flaskapp.env
+    echo 'PROJECT_ID=${var.project_id}' >> /home/packer/flaskapp.env
+    echo 'PUBSUB_TOPIC_ID=${var.pubsub_topic_name}' >> /home/packer/flaskapp.env
+    echo 'ENVIRONMENT=${var.app_env}' >> /home/packer/flaskapp.env
+    sudo chown csye6225:csye6225 /home/packer/flaskapp.env
+    sudo chmod 644 /home/packer/flaskapp.env
+    sudo systemctl daemon-reload
+    sudo systemctl restart flaskapp"
+  --service-account=google_service_account.service_account.email
+  --scopes=var.scopes \
+  --region=us-central1-a \
+  --project=var.project_id
+
+  /home/packer/flaskapp.env
+
+gcloud compute instance-templates create test-template-actions \
+  --machine-type=e2-small \
+  --boot-disk-size=20 \
+  --boot-disk-type=pd-balanced \
+  --image=flask-app-new \
+  --subnet=webapp \
+  --network=app-vpc-assignment8 \
+  --tags=webapp \
+  --region=us-central1\
+  --project=csye6225-414117
