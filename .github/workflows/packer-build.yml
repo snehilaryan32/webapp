@@ -64,7 +64,7 @@ jobs:
           INSTANCE_TEMPLATE_NAME=template-${{ env.IMAGE_NAME }}
           gcloud compute instance-templates create ${INSTANCE_TEMPLATE_NAME} \
           --project=${{ vars.PROJECT_INSTANCE }} \
-          --region=${{ vars.REGION_INSTANCE }}\
+          --region=${{ vars.REGION_INSTANCE }} \
           --machine-type=${{ vars.MACHINE_TYPE }} \
           --boot-disk-size=${{ vars.boot_disk_size }} \
           --boot-disk-type=${{ vars.boot_disk_type }} \
@@ -72,6 +72,6 @@ jobs:
           --network=${{ vars.NETWORK_INSTANCE }} \
           --subnet=${{ vars.SUBNET_INSTANCE }} \
           --tags=${{ vars.TAGS_INSTANCE }} 
-          # --scopes=${{ vars.SCOPES_INSTANCE }} \
-          # --service-account=${{ vars.SERVICE_ACCOUNT }}
+          --scopes=${{ vars.SCOPES_INSTANCE }} \
+          --service-account=${{ vars.SERVICE_ACCOUNT }}
           echo "INSTANCE_TEMPLATE_NAME=${INSTANCE_TEMPLATE_NAME}" >> $GITHUB_ENV
