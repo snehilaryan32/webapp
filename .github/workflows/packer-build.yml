@@ -64,7 +64,7 @@ jobs:
         run: |
           
           INSTANCE_TEMPLATE_NAME=template-${{ env.IMAGE_NAME }}
-          gcloud compute instance-templates create test_from_actions_metadata \
+          gcloud compute instance-templates create test-from-actions-metadata \
           --project=${{ vars.PROJECT_INSTANCE }} \
           --region=${{ vars.REGION_INSTANCE }} \
           --machine-type=${{ vars.MACHINE_TYPE }} \
