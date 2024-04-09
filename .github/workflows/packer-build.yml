@@ -75,7 +75,7 @@ jobs:
           --subnet=${{ vars.SUBNET_INSTANCE }} \
           --tags=${{ vars.TAGS_INSTANCE }} \
           --scopes=${{ vars.SCOPES_INSTANCE }} \
-          --service-account=${{ vars.SERVICE_ACCOUNT }}
+          --service-account=${{ vars.SERVICE_ACCOUNT }} \
           --metadata=startup-script-url="#! /bin/bash
               touch ${{ vars.ENV_FILE_PATH_INSTANCE }}
               echo 'DB_HOST=${{ env.DB_HOST }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }}
