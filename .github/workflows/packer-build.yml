@@ -49,8 +49,8 @@ jobs:
         id: init
         run: "packer init ./packer_image/flask_image.pkr.hcl"
 
-      - name: Run `packer build`
-        id: build
+      # - name: Run `packer build`
+      #   id: build
         # run: |
         #     cd packer_image 
         #     IMAGE_NAME=flask-app-image-$(date +%Y%m%d%H%M%S)
