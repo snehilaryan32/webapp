@@ -38,7 +38,8 @@ jobs:
         run: 'gcloud info'
 
       - name: 'Fetch the db host name'
-        run: 'gcloud secrets versions access latest --secret="db-private-ip"'
+        run: | 
+          echo "::set-env name=DB_HOST::$(gcloud secrets versions access latest --secret=db-private-ip)"
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
@@ -66,7 +67,7 @@ jobs:
           --machine-type=e2-small \
           --boot-disk-size=20 \
           --boot-disk-type=pd-balanced \
-          --image={{ env.IMAGE_NAME }} \
+          --image=${{ env.IMAGE_NAME }} \
           --network=app-vpc-assignment8 \
           --subnet=webapp \
           --tags=webapp 
