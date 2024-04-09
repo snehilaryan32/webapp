@@ -73,5 +73,5 @@ jobs:
           --subnet=${{ vars.SUBNET_INSTANCE }} \
           --tags=${{ vars.TAGS_INSTANCE }} \
           --scopes=${{ vars.SCOPES_INSTANCE }} \
-          --service-account=${{ vars.SERVICE_ACCOUNT }} \ 
+          --service-account=${{ vars.SERVICE_ACCOUNT }}
           echo "INSTANCE_TEMPLATE_NAME=${INSTANCE_TEMPLATE_NAME}" >> $GITHUB_ENV
