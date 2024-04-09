@@ -18,7 +18,6 @@ jobs:
   packer-build:
     runs-on: ubuntu-latest
     name: Run Packer
-    if: github.event.workflow_run.conclusion == 'success'
     steps:
 
       - name: Checkout
