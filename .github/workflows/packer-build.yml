@@ -71,7 +71,7 @@ jobs:
           --image=${{ env.IMAGE_NAME }} \
           --network=${{ vars.NETWORK_INSTANCE }} \
           --subnet=${{ vars.SUBNET_INSTANCE }} \
-          --tags=${{ vars.TAGS_INSTANCE }} \
-          --scopes=${{ vars.SCOPES_INSTANCE }} \
-          --service-account=${{ vars.SERVICE_ACCOUNT }}
+          --tags=${{ vars.TAGS_INSTANCE }} 
+          # --scopes=${{ vars.SCOPES_INSTANCE }} \
+          # --service-account=${{ vars.SERVICE_ACCOUNT }}
           echo "INSTANCE_TEMPLATE_NAME=${INSTANCE_TEMPLATE_NAME}" >> $GITHUB_ENV
