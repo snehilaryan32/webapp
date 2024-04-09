@@ -130,3 +130,9 @@ gcloud projects add-iam-policy-binding csye6225-414117 \
 gcloud projects add-iam-policy-binding csye6225-414117 \
     --member serviceAccount:svc-packer@csye6225-414117.iam.gserviceaccount.com \
     --role roles/compute.instanceAdmin.v1
+
+gcloud compute networks subnets add-iam-policy-binding webapp \
+    --region=us-central1 \
+    --project=csye6225-414117 \
+    --member=serviceAccount:svc-packer@csye6225-414117.iam.gserviceaccount.com \
+    --role=roles/compute.networkUser
