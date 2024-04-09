@@ -61,13 +61,13 @@ jobs:
           
           INSTANCE_TEMPLATE_NAME=template-${{ env.IMAGE_NAME }}
           gcloud compute instance-templates create test-template-from-actions \
+          --project=csye6225-414117 \
+          --region=us-central1 \
           --machine-type=e2-small \
           --boot-disk-size=20 \
           --boot-disk-type=pd-balanced \
           --image=flask-app \
           --network=app-vpc-assignment8 \
           --subnet=webapp \
-          --tags=webapp \
-          --region=us-central1\
-          --project=csye6225-414117
+          --tags=webapp 
           echo "INSTANCE_TEMPLATE_NAME=${INSTANCE_TEMPLATE_NAME}" >> $GITHUB_ENV
