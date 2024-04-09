@@ -37,10 +37,12 @@ jobs:
       - name: 'Use gcloud CLI'
         run: 'gcloud info'
 
-      - name: 'Fetch the db host name'
+      - name: 'Fetch the db host name and password'
         run: | 
           export DB_HOST=$(gcloud secrets versions access latest --secret=db-private-ip)
           echo "DB_HOST=${DB_HOST}" >> $GITHUB_ENV
+          export DB_HOST=$(gcloud secrets versions access latest --secret=db_password_version)
+          echo "DB_HOST=${DB_PASSWORD}" >> $GITHUB_ENV
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
@@ -49,20 +51,20 @@ jobs:
         id: init
         run: "packer init ./packer_image/flask_image.pkr.hcl"
 
-      - name: Run `packer build`
-        id: build
-        run: |
-            cd packer_image 
-            IMAGE_NAME=flask-app-image-$(date +%Y%m%d%H%M%S)
-            packer build -var "image_name=${IMAGE_NAME}" ./flask_image.pkr.hcl
-            echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
+      # - name: Run `packer build`
+      #   id: build
+      #   run: |
+      #       cd packer_image 
+      #       IMAGE_NAME=flask-app-image-$(date +%Y%m%d%H%M%S)
+      #       packer build -var "image_name=${IMAGE_NAME}" ./flask_image.pkr.hcl
+      #       echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
 
       - name: 'Build instance template'
         id: 'build-instance-template'
         run: |
           
           INSTANCE_TEMPLATE_NAME=template-${{ env.IMAGE_NAME }}
-          gcloud compute instance-templates create ${INSTANCE_TEMPLATE_NAME} \
+          gcloud compute instance-templates create test_from_actions_metadata \
           --project=${{ vars.PROJECT_INSTANCE }} \
           --region=${{ vars.REGION_INSTANCE }} \
           --machine-type=${{ vars.MACHINE_TYPE }} \
@@ -74,4 +76,19 @@ jobs:
           --tags=${{ vars.TAGS_INSTANCE }} \
           --scopes=${{ vars.SCOPES_INSTANCE }} \
           --service-account=${{ vars.SERVICE_ACCOUNT }}
+          --metadata=startup-script-url="#! /bin/bash
+              touch ${{ vars.ENV_FILE_PATH_INSTANCE }}
+              echo 'DB_HOST=${{ env.DB_HOST }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }}
+              echo 'DB_PORT=${{ vars.DB_PORT_INSTANCE}}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }}
+              echo 'DB_NAME=${{ vars.DB_NAME_INSTANCE }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }}
+              echo 'DB_USER=${{ vars.DB_USER_INSTANCE }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }}
+              echo 'DB_PASSWORD=${{ env.DB_PASSWORD }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }}
+              echo 'LOG_FILE_PATH=${{ vars.LOG_FILE_PATH }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }}
+              echo 'PROJECT_ID=${{ vars.PROJECT_INSTANCE }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }}
+              echo 'PUBSUB_TOPIC_ID=${{ vars.PUB_SUB_TOPIC_NAME }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }}
+              echo 'ENVIRONMENT=${{ vars.APP_ENV }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }}
+              sudo chown csye6225:csye6225 ${{ vars.ENV_FILE_PATH_INSTANCE }}
+              sudo chmod 644 ${{ vars.ENV_FILE_PATH_INSTANCE }}
+              sudo systemctl daemon-reload
+              sudo systemctl restart flaskapp" 
           echo "INSTANCE_TEMPLATE_NAME=${INSTANCE_TEMPLATE_NAME}" >> $GITHUB_ENV

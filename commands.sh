@@ -91,7 +91,7 @@ gcloud compute instance-templates create INSTANCE_TEMPLATE_NAME \
   --network-tier=app-vpc-assignment7 \
   --tags=webapp \
   --metadata=startup-script="#! /bin/bash
-    touch ${local.env_file_path}
+    touch /home/packer/flaskapp.env
     echo 'DB_HOST=${local.db_host}' >> /home/packer/flaskapp.env
     echo 'DB_PORT=5432' >> ${local.env_file_path}
     echo 'DB_NAME=${var.db_name}' >> /home/packer/flaskapp.env
