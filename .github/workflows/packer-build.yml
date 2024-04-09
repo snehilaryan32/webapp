@@ -65,8 +65,8 @@ jobs:
           --boot-disk-size=20 \
           --boot-disk-type=pd-balanced \
           --image=flask-app \
-          --subnet=webapp \
           --network=app-vpc-assignment8 \
+          --subnet=webapp \
           --tags=webapp \
           --region=us-central1\
           --project=csye6225-414117
