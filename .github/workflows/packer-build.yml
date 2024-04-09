@@ -1,10 +1,14 @@
 name: packer-build
+# on:
+#   workflow_run:
+#     workflows: ["Integration Test"]
+#     branches: [main]
+#     types: 
+#       - completed
+
 on:
-  workflow_run:
-    workflows: ["Integration Test"]
-    branches: [main]
-    types: 
-      - completed
+  pull_request:
+    branches: [ main ]
 
 
 env:
@@ -33,6 +37,9 @@ jobs:
   
       - name: 'Use gcloud CLI'
         run: 'gcloud info'
+
+      - name: 'Fetch the db host name'
+        run: 'gcloud secrets versions access latest --secret="db-private-ip"'
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main

@@ -75,3 +75,7 @@ curl -v --request POST 'http://127.0.0.1:8080/v1/user' \
 }'
 
 packer build -var 'image_name=flask-app' ./flask_image.pkr.hcl
+
+gcloud projects add-iam-policy-binding csye6225-414117 --member="serviceAccount:svc-packer@csye6225-414117.iam.gserviceaccount.com" --role="roles/secretmanager.admin"
+
+gcloud secrets versions access latest --secret="db-private-ip"
