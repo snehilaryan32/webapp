@@ -41,7 +41,7 @@ jobs:
         run: | 
           export DB_HOST=$(gcloud secrets versions access latest --secret=db-private-ip)
           echo "DB_HOST=${DB_HOST}" >> $GITHUB_ENV
-          export DB_PASSWORD=$(gcloud secrets versions access latest --secret=db_password_version)
+          export DB_PASSWORD=$(gcloud secrets versions access latest --secret=db-password)
           echo "DB_PASSWORD=${DB_PASSWORD}" >> $GITHUB_ENV
 
       - name: Setup `packer`
@@ -70,7 +70,7 @@ jobs:
           --machine-type=${{ vars.MACHINE_TYPE }} \
           --boot-disk-size=${{ vars.boot_disk_size }} \
           --boot-disk-type=${{ vars.boot_disk_type }} \
-          --image=${{ env.IMAGE_NAME }} \
+          --image=${{ vars.IMAGE_NAME }} \
           --network=${{ vars.NETWORK_INSTANCE }} \
           --subnet=${{ vars.SUBNET_INSTANCE }} \
           --tags=${{ vars.TAGS_INSTANCE }} \
