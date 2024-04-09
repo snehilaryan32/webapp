@@ -39,7 +39,8 @@ jobs:
 
       - name: 'Fetch the db host name'
         run: | 
-          echo "::set-env name=DB_HOST::$(gcloud secrets versions access latest --secret=db-private-ip)"
+          export DB_HOST=$(gcloud secrets versions access latest --secret=db-private-ip)
+          echo "DB_HOST=${DB_HOST}" >> $GITHUB_ENV
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
