@@ -112,16 +112,18 @@ gcloud compute instance-templates create INSTANCE_TEMPLATE_NAME \
 
   /home/packer/flaskapp.env
 
-gcloud compute instance-templates create test-template-actions \
+gcloud compute instance-templates create test-from-terminal \
+  --project=csye6225-414117 \
+  --region=us-central1\
   --machine-type=e2-small \
   --boot-disk-size=20 \
   --boot-disk-type=pd-balanced \
-  --image=flask-app-new \
-  --subnet=webapp \
+  --image=flask-app-image-20240409035435 \
   --network=app-vpc-assignment8 \
+  --subnet=webapp \
   --tags=webapp \
-  --region=us-central1\
-  --project=csye6225-414117
+  --scopes=https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/logging.admin,https://www.googleapis.com/auth/pubsub \
+  --service-account=service-account-webapp-id@csye6225-414117.iam.gserviceaccount.com 
 
 gcloud projects add-iam-policy-binding csye6225-414117 \
     --member serviceAccount:svc-packer@csye6225-414117.iam.gserviceaccount.com \
