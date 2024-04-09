@@ -47,26 +47,26 @@ jobs:
         id: init
         run: "packer init ./packer_image/flask_image.pkr.hcl"
 
-      # - name: Run `packer build`
-      #   id: build
-      #   run: |
-      #       cd packer_image 
-      #       IMAGE_NAME=flask-app-image-$(date +%Y%m%d%H%M%S)
-      #       packer build -var "image_name=${IMAGE_NAME}" ./flask_image.pkr.hcl
-      #       echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
+      - name: Run `packer build`
+        id: build
+        run: |
+            cd packer_image 
+            IMAGE_NAME=flask-app-image-$(date +%Y%m%d%H%M%S)
+            packer build -var "image_name=${IMAGE_NAME}" ./flask_image.pkr.hcl
+            echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
 
       - name: 'Build instance template'
         id: 'build-instance-template'
         run: |
           
           INSTANCE_TEMPLATE_NAME=template-${{ env.IMAGE_NAME }}
-          gcloud compute instance-templates create test-template-from-actions \
+          gcloud compute instance-templates create ${INSTANCE_TEMPLATE_NAME} \
           --project=csye6225-414117 \
           --region=us-central1 \
           --machine-type=e2-small \
           --boot-disk-size=20 \
           --boot-disk-type=pd-balanced \
-          --image=flask-app \
+          --image={{ env.IMAGE_NAME }} \
           --network=app-vpc-assignment8 \
           --subnet=webapp \
           --tags=webapp 
