@@ -51,20 +51,19 @@ jobs:
         id: init
         run: "packer init ./packer_image/flask_image.pkr.hcl"
 
-      # - name: Run `packer build`
-      #   id: build
-      #   run: |
-      #       cd packer_image 
-      #       IMAGE_NAME=flask-app-image-$(date +%Y%m%d%H%M%S)
-      #       packer build -var "image_name=${IMAGE_NAME}" ./flask_image.pkr.hcl
-      #       echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
+      - name: Run `packer build`
+        id: build
+        run: |
+            cd packer_image 
+            IMAGE_NAME=flask-app-image-$(date +%Y%m%d%H%M%S)
+            packer build -var "image_name=${IMAGE_NAME}" ./flask_image.pkr.hcl
+            echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
 
       - name: 'Build instance template'
         id: 'build-instance-template'
         run: |
-          
           INSTANCE_TEMPLATE_NAME=template-${{ env.IMAGE_NAME }}
-          gcloud compute instance-templates create test-from-actions-metadata15 \
+          gcloud compute instance-templates create ${INSTANCE_TEMPLATE_NAME} \
           --project=${{ vars.PROJECT_INSTANCE }} \
           --region=${{ vars.REGION_INSTANCE }} \
           --machine-type=${{ vars.MACHINE_TYPE }} \
@@ -97,8 +96,16 @@ jobs:
         id: 'build-managed-instance-group'
         run: |
           gcloud compute instance-groups managed rolling-action start-update ${{ vars.INSTANCE_GROUP_NAME }} \
-          --version=template=test-from-actions-metadata15 \
+          --version=template=${{ env.INSTANCE_TEMPLATE_NAME }} \
           --region=${{ vars.REGION_INSTANCE }} \
+
+      - name: 'Wait for changes to be rolled out'
+        id: 'wait-for-rolling-update'
+        run: |
+          gcloud compute instance-groups managed wait-until ${{ vars.INSTANCE_GROUP_NAME }} \
+          --version-target-reached \
+          --region=${{ vars.REGION_INSTANCE }}
+           
 
 
 
