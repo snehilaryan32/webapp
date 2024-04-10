@@ -64,7 +64,7 @@ jobs:
         run: |
           
           INSTANCE_TEMPLATE_NAME=template-${{ env.IMAGE_NAME }}
-          gcloud compute instance-templates create test-from-actions-metadata10 \
+          gcloud compute instance-templates create test-from-actions-metadata15 \
           --project=${{ vars.PROJECT_INSTANCE }} \
           --region=${{ vars.REGION_INSTANCE }} \
           --machine-type=${{ vars.MACHINE_TYPE }} \
@@ -76,7 +76,7 @@ jobs:
           --tags=${{ vars.TAGS_INSTANCE }} \
           --scopes=${{ vars.SCOPES_INSTANCE }} \
           --service-account=${{ vars.SERVICE_ACCOUNT }} \
-          --metadata=startup-script-url="#!/bin/bash 
+          --metadata=startup-script="#!/bin/bash 
             touch ${{ vars.ENV_FILE_PATH_INSTANCE }} 
             echo "DB_HOST=${{ env.DB_HOST }}" >> ${{ vars.ENV_FILE_PATH_INSTANCE }} 
             echo "DB_PORT=${{ vars.DB_PORT_INSTANCE}}" >> ${{ vars.ENV_FILE_PATH_INSTANCE }} 
@@ -92,13 +92,12 @@ jobs:
             sudo systemctl daemon-reload 
             sudo systemctl restart flaskapp" 
           echo "INSTANCE_TEMPLATE_NAME=${INSTANCE_TEMPLATE_NAME}" >> $GITHUB_ENV
-          echo "INSTANCE_TEMPLATE_NAME=${INSTANCE_TEMPLATE_NAME}" >> $GITHUB_ENV
 
       - name: 'Update instance group'
         id: 'build-managed-instance-group'
         run: |
           gcloud compute instance-groups managed rolling-action start-update ${{ vars.INSTANCE_GROUP_NAME }} \
-          --version=template=test-from-actions-metadata10 \
+          --version=template=test-from-actions-metadata15 \
           --region=${{ vars.REGION_INSTANCE }} \
 
 
