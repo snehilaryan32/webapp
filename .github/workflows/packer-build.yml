@@ -102,7 +102,7 @@ jobs:
           --version=template=${{ env.INSTANCE_TEMPLATE_NAME }} \
           --region=${{ vars.REGION_INSTANCE }} \
 
-      - name: 'Wait for changes to be rolled out'
+      - name: 'Wait for changes to be rolled'
         id: 'wait-for-rolling-update'
         run: |
           gcloud compute instance-groups managed wait-until ${{ vars.INSTANCE_GROUP_NAME }} \
