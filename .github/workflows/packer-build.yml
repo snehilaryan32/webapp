@@ -43,6 +43,8 @@ jobs:
           echo "DB_HOST=${DB_HOST}" >> $GITHUB_ENV
           export DB_PASSWORD=$(gcloud secrets versions access latest --secret=db-password)
           echo "DB_PASSWORD=${DB_PASSWORD}" >> $GITHUB_ENV
+          export BOOT_DISK_KMS_KEY=$(gcloud secrets versions access latest --secret=server-key)
+          echo "BOOT_DISK_KMS_KEY=${BOOT_DISK_KMS_KEY}" >> $GITHUB_ENV
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
@@ -69,7 +71,8 @@ jobs:
           --machine-type=${{ vars.MACHINE_TYPE }} \
           --boot-disk-size=${{ vars.boot_disk_size }} \
           --boot-disk-type=${{ vars.boot_disk_type }} \
-          --image=${{ vars.IMAGE_NAME }} \
+          --boot-disk-kms-key=${{ env.BOOT_DISK_KMS_KEY }} \
+          --image=${{ env.IMAGE_NAME }} \
           --network=${{ vars.NETWORK_INSTANCE }} \
           --subnet=${{ vars.SUBNET_INSTANCE }} \
           --tags=${{ vars.TAGS_INSTANCE }} \
