@@ -92,3 +92,13 @@ jobs:
               sudo systemctl daemon-reload
               sudo systemctl restart flaskapp" 
           echo "INSTANCE_TEMPLATE_NAME=${INSTANCE_TEMPLATE_NAME}" >> $GITHUB_ENV
+
+      - name: 'Build managed instance group'
+        id: 'build-managed-instance-group'
+        run: |
+          gcloud compute instance-groups managed rolling-action start-update ${{ vars.INSTANCE_GROUP_NAME }} \
+          --version=template=test-from-actions-metadata \
+          --region=${{ vars.REGION_INSTANCE }} \
+
+
+
