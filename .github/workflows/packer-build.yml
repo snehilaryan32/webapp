@@ -64,7 +64,7 @@ jobs:
         run: |
           
           INSTANCE_TEMPLATE_NAME=template-${{ env.IMAGE_NAME }}
-          gcloud compute instance-templates create test-from-actions-metadata8 \
+          gcloud compute instance-templates create test-from-actions-metadata9 \
           --project=${{ vars.PROJECT_INSTANCE }} \
           --region=${{ vars.REGION_INSTANCE }} \
           --machine-type=${{ vars.MACHINE_TYPE }} \
@@ -76,14 +76,14 @@ jobs:
           --tags=${{ vars.TAGS_INSTANCE }} \
           --scopes=${{ vars.SCOPES_INSTANCE }} \
           --service-account=${{ vars.SERVICE_ACCOUNT }} \
-          --metadata=startup-script-url=${{ vars.STARTUP_SCRIPT }} " 
+          --metadata=startup-script-url=${{ vars.STARTUP_SCRIPT }}
           echo "INSTANCE_TEMPLATE_NAME=${INSTANCE_TEMPLATE_NAME}" >> $GITHUB_ENV
 
       - name: 'Update instance group'
         id: 'build-managed-instance-group'
         run: |
           gcloud compute instance-groups managed rolling-action start-update ${{ vars.INSTANCE_GROUP_NAME }} \
-          --version=template=test-from-actions-metadata8 \
+          --version=template=test-from-actions-metadata9 \
           --region=${{ vars.REGION_INSTANCE }} \
 
 
