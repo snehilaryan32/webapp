@@ -138,3 +138,12 @@ gcloud compute networks subnets add-iam-policy-binding webapp \
     --project=csye6225-414117 \
     --member=serviceAccount:svc-packer@csye6225-414117.iam.gserviceaccount.com \
     --role=roles/compute.networkUser
+
+gcloud projects add-iam-policy-binding csye6225-414117 \
+    --member=serviceAccount:svc-packer@csye6225-414117.iam.gserviceaccount.com \
+    --role=roles/compute.loadBalancerAdmin
+
+gcloud compute instance-groups managed rolling-action start-update webapp-instance-manager \
+    --version=template=test-from-actions-metadata \
+    --region=us-central1 \
+
