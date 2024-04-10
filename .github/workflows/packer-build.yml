@@ -64,7 +64,7 @@ jobs:
         run: |
           
           INSTANCE_TEMPLATE_NAME=template-${{ env.IMAGE_NAME }}
-          gcloud compute instance-templates create test-from-actions-metadata4 \
+          gcloud compute instance-templates create test-from-actions-metadata5 \
           --project=${{ vars.PROJECT_INSTANCE }} \
           --region=${{ vars.REGION_INSTANCE }} \
           --machine-type=${{ vars.MACHINE_TYPE }} \
@@ -76,28 +76,28 @@ jobs:
           --tags=${{ vars.TAGS_INSTANCE }} \
           --scopes=${{ vars.SCOPES_INSTANCE }} \
           --service-account=${{ vars.SERVICE_ACCOUNT }} \
-          --metadata=startup-script-url="#! /bin/bash \
-              touch ${{ vars.ENV_FILE_PATH_INSTANCE }} \
-              echo 'DB_HOST=${{ env.DB_HOST }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} \
-              echo 'DB_PORT=${{ vars.DB_PORT_INSTANCE}}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} \
-              echo 'DB_NAME=${{ vars.DB_NAME_INSTANCE }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} \
-              echo 'DB_USER=${{ vars.DB_USER_INSTANCE }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} \
-              echo 'DB_PASSWORD=${{ env.DB_PASSWORD }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} \
-              echo 'LOG_FILE_PATH=${{ vars.LOG_FILE_PATH }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} \
-              echo 'PROJECT_ID=${{ vars.PROJECT_INSTANCE }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} \
-              echo 'PUBSUB_TOPIC_ID=${{ vars.PUB_SUB_TOPIC_NAME }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} \
-              echo 'ENVIRONMENT=${{ vars.APP_ENV }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} \
-              sudo chown csye6225:csye6225 ${{ vars.ENV_FILE_PATH_INSTANCE }} \
-              sudo chmod 644 ${{ vars.ENV_FILE_PATH_INSTANCE }} \
-              sudo systemctl daemon-reload \
-              sudo systemctl restart flaskapp" 
+          --metadata=startup-script-url="#! /bin/bash 
+            touch ${{ vars.ENV_FILE_PATH_INSTANCE }} 
+            echo 'DB_HOST=${{ env.DB_HOST }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} 
+            echo 'DB_PORT=${{ vars.DB_PORT_INSTANCE}}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} 
+            echo 'DB_NAME=${{ vars.DB_NAME_INSTANCE }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} 
+            echo 'DB_USER=${{ vars.DB_USER_INSTANCE }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} 
+            echo 'DB_PASSWORD=${{ env.DB_PASSWORD }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} 
+            echo 'LOG_FILE_PATH=${{ vars.LOG_FILE_PATH }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} 
+            echo 'PROJECT_ID=${{ vars.PROJECT_INSTANCE }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} 
+            echo 'PUBSUB_TOPIC_ID=${{ vars.PUB_SUB_TOPIC_NAME }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} 
+            echo 'ENVIRONMENT=${{ vars.APP_ENV }}' >> ${{ vars.ENV_FILE_PATH_INSTANCE }} 
+            sudo chown csye6225:csye6225 ${{ vars.ENV_FILE_PATH_INSTANCE }} 
+            sudo chmod 644 ${{ vars.ENV_FILE_PATH_INSTANCE }} 
+            sudo systemctl daemon-reload 
+            sudo systemctl restart flaskapp" 
           echo "INSTANCE_TEMPLATE_NAME=${INSTANCE_TEMPLATE_NAME}" >> $GITHUB_ENV
 
       - name: 'Update instance group'
         id: 'build-managed-instance-group'
         run: |
           gcloud compute instance-groups managed rolling-action start-update ${{ vars.INSTANCE_GROUP_NAME }} \
-          --version=template=test-from-actions-metadata4 \
+          --version=template=test-from-actions-metadata5 \
           --region=${{ vars.REGION_INSTANCE }} \
 
 
