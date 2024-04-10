@@ -147,3 +147,6 @@ gcloud compute instance-groups managed rolling-action start-update webapp-instan
     --version=template=test-from-actions-metadata \
     --region=us-central1 \
 
+gcloud compute instance-groups managed wait-until webapp-instance-manager \
+    --version-target-reached \
+    --region=us-central1 
