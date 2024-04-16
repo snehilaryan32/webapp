@@ -50,22 +50,22 @@ def __create_headers(username, password):
 ##############################################Test 1 Create and Get User#########################################
 def test_create_and_get_user(client, user_data):
     #Create an account using POST call
-    response = client.post('/v1/user', data=json.dumps(user_data), content_type='application/json')
+    response = client.post('/v2/user', data=json.dumps(user_data), content_type='application/json')
     user_controller.verify_user(user_controller.get_user_details(user_data["username"]).id)
     assert response.status_code == 201
     #Using the GET call, validate account exists
     headers = __create_headers(user_data["username"], user_data["password"])
-    response = client.get('/v1/user/self', headers=headers)
+    response = client.get('/v2/user/self', headers=headers)
     assert response.status_code == 200 
     assert response.get_json()["username"] == user_data["username"]
 
 ##############################################Test 2 Update and Get User#########################################
 def test_update_and_get_user(client, user_data, user_data_updated):
     #Update the account
-    response = client.put('/v1/user/self', data = json.dumps(user_data_updated), headers=__create_headers(user_data["username"], user_data["password"]))
+    response = client.put('/v2/user/self', data = json.dumps(user_data_updated), headers=__create_headers(user_data["username"], user_data["password"]))
     assert response.status_code == 204
     # Using the GET call, validate the account was updated
-    response = client.get('/v1/user/self', headers=__create_headers(user_data["username"], user_data_updated["password"]))
+    response = client.get('/v2/user/self', headers=__create_headers(user_data["username"], user_data_updated["password"]))
     assert response.status_code == 200
     assert response.get_json()["username"] == user_data["username"] #Make sure username is same 
     assert response.get_json()["first_name"] == user_data_updated["first_name"] #Make sure first name is updated
