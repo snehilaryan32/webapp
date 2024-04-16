@@ -26,7 +26,7 @@ GRANT ALL PRIVILEGES ON DATABASE firstdb TO aryan;
 sudo yum update
 sudo yum install python3
 
-sudo yum install python3-pip
+<!-- sudo yum install python3-pip -->
 
 # Unzip the files in wsl
 sudo yum install unzip
