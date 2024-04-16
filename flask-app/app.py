@@ -123,7 +123,7 @@ def db_health_check():
     return response
 
 ###############################User Creation############################################
-@app.route('/v1/user', methods=['POST']) 
+@app.route('/v2/user', methods=['POST']) 
 def create_user():
     response = make_response()
     response.headers['Content-Type'] = 'application/json'
@@ -189,7 +189,7 @@ def verify_email(token_uuid):
     return response
 
 ###############################Get User Details and Post Update#########################################
-@app.route('/v1/user/self', methods=['GET', 'PUT'])
+@app.route('/v2/user/self', methods=['GET', 'PUT'])
 @auth.login_required
 def get_user():
     response = make_response()
